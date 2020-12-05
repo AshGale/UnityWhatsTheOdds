@@ -5,7 +5,6 @@ public class CameraConrol : MonoBehaviour
 {
     public GameObject centerOfWorld;
     public PlayerControl playerControl;
-    public int rotationSpeed;
     private Vector3 dragOrigin;
     private Vector3 rotateTo;
     private float width;
@@ -13,10 +12,8 @@ public class CameraConrol : MonoBehaviour
 
     private void Start()
     {
-        rotationSpeed = GlobalVariables.data.CAMERA_ROTATION_SPEED;
         width = ( GlobalVariables.data.WIDTH -1 ) / 2;
         depth = ( GlobalVariables.data.DEPTH -1 ) / 2;
-        rotationSpeed = GlobalVariables.data.ROTATION_SPEED;
         //centerOfWorld = GameObject.Find("CenterOfWorld");
     }
     void Update()
@@ -29,15 +26,15 @@ public class CameraConrol : MonoBehaviour
 
     public IEnumerator MoveCameraByMouse()
     {
+        int rotationSpeed = GlobalVariables.data.CAMERA_ROTATION_SPEED;
         dragOrigin = Input.mousePosition;
         while (Input.GetMouseButton(1))
         {
             rotateTo = Input.mousePosition - dragOrigin;
             rotateTo.x = 0f;
             rotateTo.z = 0f;
-
-            transform.RotateAround(new Vector3(width, 1, depth), rotateTo, rotationSpeed * Time.deltaTime);
-            yield return Time.deltaTime;
+            transform.RotateAround(new Vector3(width, 1, depth), rotateTo, rotationSpeed * .01f);
+            yield return null;
         }
         playerControl.activePlayer.cameraPosition = transform.rotation.eulerAngles;
     }

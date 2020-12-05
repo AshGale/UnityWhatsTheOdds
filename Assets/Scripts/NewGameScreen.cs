@@ -30,9 +30,26 @@ public class NewGameScreen : MonoBehaviour
         //newGameScreen
         // - could search player prefs for last setup, but doing quickstart
 
-        NewGameDefault();
-
+        if (PlayerPrefs.HasKey("cameraSpeed"))
+        {
+            SetPlayerPreferences();
+            NewGameDefault();
+        }
+        else
+        {
+            NewGameDefault();
+        }
         yield return null;
+    }
+
+    private void SetPlayerPreferences()
+    {
+        int speed = PlayerPrefs.GetInt("cameraSpeed");
+        if (speed != 0)
+        {
+            GlobalVariables.data.CAMERA_ROTATION_SPEED = speed;
+        }
+        GlobalVariables.data.SHOW_DICE_INFLATE_ANIMATION = bool.Parse(PlayerPrefs.GetString("diceInflate"));
     }
 
     private void NewGameDefault()

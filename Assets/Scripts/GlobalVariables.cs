@@ -62,7 +62,6 @@ public class GlobalVariables : MonoBehaviour
 
     public int WIDTH = 8;
     public int DEPTH = 8;
-    public int ROTATION_SPEED = 30;
     public int MOVES_FOR_BASE = 3; 
     public int INCOME_1 = 1;
     public int INCOME_3 = 2;
@@ -82,7 +81,7 @@ public class GlobalVariables : MonoBehaviour
 
     public bool SHOW_DICE_INFLATE_ANIMATION = true;
 
-    public int CAMERA_ROTATION_SPEED = 30;
+    public int CAMERA_ROTATION_SPEED = 60;
     public float FLASH_SELECTED_SPEED = .5f;
     public float BASE_SPAWN_DISTANCE = 1.3f;
     public float DICE_SIZE = 0.5f;

@@ -4,13 +4,14 @@ using UnityEngine;
 
 public enum ActiveSreen
 {
-     MainMenu, NewGameMenu, InGameMenu, InGameBanner
+     MainMenu, NewGameMenu, InGameMenu, InGameBanner, SettingsMenu
 }
 
 public class Ui_Control : MonoBehaviour
 {
     public GameControl gameControl;
     public NewGameScreen newGameScreen;
+    public SettingsScreen settingsScreen;
 
     public Material SelectedMaterial;
     public Material DefaultMaterial;
@@ -21,6 +22,7 @@ public class Ui_Control : MonoBehaviour
     public GameObject newGameMenu;
     public GameObject gameMenu;
     public GameObject gameBanner;
+    public GameObject settings;
 
     // Start is called before the first frame update
     void Start()
@@ -45,7 +47,8 @@ public class Ui_Control : MonoBehaviour
 
     public void SettingsButton()
     {
-
+        settingsScreen.LoadSceen();
+        SetActiveScreens(ActiveSreen.SettingsMenu);
     }
 
     public void QuitButton()
@@ -111,6 +114,7 @@ public class Ui_Control : MonoBehaviour
         gameBanner.SetActive(false);
         gameMenu.SetActive(false);
         mainMenu.SetActive(false);
+        settings.SetActive(false);
         gameControl.allowInput = false;
 
         switch (activeScreen)
@@ -135,6 +139,11 @@ public class Ui_Control : MonoBehaviour
                 {
                     gameBanner.SetActive(true);
                     gameMenu.SetActive(true);
+                    break;
+                }
+            case ActiveSreen.SettingsMenu:
+                {
+                    settings.SetActive(true);
                     break;
                 }
         }
