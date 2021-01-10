@@ -82,6 +82,7 @@ public class GlobalVariables : MonoBehaviour
     public bool SHOW_DICE_INFLATE_ANIMATION = true;
 
     public int CAMERA_ROTATION_SPEED = 60;
+    public float SCROLL_SPEED = .5f;
     public float FLASH_SELECTED_SPEED = .5f;
     public float BASE_SPAWN_DISTANCE = 1.3f;
     public float DICE_SIZE = 0.5f;
@@ -91,6 +92,7 @@ public class GlobalVariables : MonoBehaviour
     public float BOARD_CLEARANCE = 2.2f;
     public float TILE_CLEARANCE = 1.8f;
     public float HOP_DELAY_TIME = .2f;
+    public float MaxZoom = 2.5f;
 
     void Awake()
     {

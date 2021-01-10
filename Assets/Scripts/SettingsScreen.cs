@@ -4,12 +4,14 @@ using UnityEngine.UI;
 
 public class SettingsScreen : MonoBehaviour
 {
+    public GameControl gameControl;
     public TMP_InputField scroleSpeed;
     public Toggle diceInflate;
+    public Slider zoomControl;
 
     public void LoadSceen()
     {
-        //todo, se
+        //If there is player prefs already
         if (PlayerPrefs.HasKey("cameraSpeed"))
         {
             scroleSpeed.GetComponent<TMP_InputField>().text = PlayerPrefs.GetInt("cameraSpeed").ToString();
@@ -18,6 +20,7 @@ public class SettingsScreen : MonoBehaviour
         {
             scroleSpeed.GetComponent<TMP_InputField>().text = GlobalVariables.data.CAMERA_ROTATION_SPEED.ToString();
             diceInflate.isOn = GlobalVariables.data.SHOW_DICE_INFLATE_ANIMATION;
+            zoomControl.value = gameControl.mainCamera.transform.position.y;
         }
     }
 

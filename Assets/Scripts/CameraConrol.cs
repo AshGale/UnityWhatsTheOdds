@@ -7,6 +7,7 @@ public class CameraConrol : MonoBehaviour
     public PlayerControl playerControl;
     private Vector3 dragOrigin;
     private Vector3 rotateTo;
+    Vector3 centerPosition;
     private float width;
     private float depth;
 
@@ -14,7 +15,7 @@ public class CameraConrol : MonoBehaviour
     {
         width = ( GlobalVariables.data.WIDTH -1 ) / 2;
         depth = ( GlobalVariables.data.DEPTH -1 ) / 2;
-        //centerOfWorld = GameObject.Find("CenterOfWorld");
+        centerPosition = centerOfWorld.transform.position;
     }
     void Update()
     {
@@ -22,6 +23,40 @@ public class CameraConrol : MonoBehaviour
         {
             StartCoroutine(MoveCameraByMouse());
         }
+        else if (Input.mouseScrollDelta.y !=0)
+        {
+            ZoomCamera(Input.mouseScrollDelta.y);
+        }
+    }
+
+    public void ZoomCamera(float zoomBy)
+    {
+        Vector3 newPosition = Vector3.MoveTowards(transform.position, centerPosition, zoomBy * GlobalVariables.data.SCROLL_SPEED);
+        //Debug.Log($"{newPosition.y} >= {centerPosition.y} {GlobalVariables.data.MaxZoom}");
+        if(newPosition.y >= (centerPosition.y + GlobalVariables.data.MaxZoom))
+        {
+            transform.position = newPosition;
+        }        
+    }
+
+    public void CameraSlider(System.Single zoom)
+    {
+        //eg 7 - 1+3 = 3;
+        //eg 7 - 1+3 = 3;
+        //transform.y - zoom;
+
+        float ammount = transform.position.y - zoom;
+        Vector3 newPosition = Vector3.MoveTowards(transform.position, centerPosition, ammount);
+        Debug.Log($"{newPosition.y} >= {centerPosition.y} {GlobalVariables.data.MaxZoom} ammount = {ammount}");
+        if (newPosition.y >= (centerPosition.y + GlobalVariables.data.MaxZoom))
+        {
+            transform.position = newPosition;
+        }
+    }
+
+    public void SetCameraPosition(Vector3 position)
+    {
+
     }
 
     public IEnumerator MoveCameraByMouse()
@@ -56,7 +91,7 @@ public class CameraConrol : MonoBehaviour
         //Debug.Log($"{transform.rotation.eulerAngles} -> {playerCameraPostion} going {direction}: {distance}");
         for (float i = 0; i < distance; i+=5)
         {
-            transform.RotateAround(centerOfWorld.transform.position, direction, 5);
+            transform.RotateAround(centerPosition, direction, 5);
             //transform.RotateAround(centerOfWorld.transform.position, direction, 5 * Time.deltaTime);
 
             yield return null;

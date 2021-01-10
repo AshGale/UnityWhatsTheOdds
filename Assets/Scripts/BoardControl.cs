@@ -438,12 +438,16 @@ public class BoardControl : MonoBehaviour
             } else if (remainder == 0)
             {
                 Debug.Log($"Tie, both destroyed");
+                await HopTo(path, attackingDice, true);
+
                 DestroySingleDice(attackingDice);
                 DestroySingleDice(targetEnemyDice);
                 
             } else
             {
                 Debug.Log($"Defender now at {remainder}");
+                await HopTo(path, attackingDice, true);
+
                 StartCoroutine(targetEnemyDice.ChangeDiceValue(remainder));
                 DestroySingleDice(attackingDice);
             }

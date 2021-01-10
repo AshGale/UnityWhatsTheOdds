@@ -192,8 +192,6 @@ public class PlayerControl : MonoBehaviour
 
     private Material GetPlayerColour(string colour)
     {
-        Debug.Log("colour" + GlobalVariables.data.PLAYER1_COLOUR);
-
         //This is synced with Ui.dropdown on newgame screen
         switch (colour) {
             case "Blue":  return blueColour;           
