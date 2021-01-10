@@ -24,6 +24,18 @@ public class SettingsScreen : MonoBehaviour
         }
     }
 
+    public void BackSettings()
+    {
+        if (gameControl.playerControl.players.Count > 0)
+        {
+            gameControl.ui_Control.InGameMenuButton();
+        }
+        else
+        {
+            gameControl.ui_Control.MainMenuButton();
+        }
+    }
+
     public void ApplySettings()
     {
         //take the settings on the screen and apply them to the Global Variables and player prefs
@@ -35,6 +47,7 @@ public class SettingsScreen : MonoBehaviour
         }
         PlayerPrefs.SetString("diceInflate", diceInflate.isOn.ToString());
         GlobalVariables.data.SHOW_DICE_INFLATE_ANIMATION = diceInflate.isOn;
+        //gameControl.cameraControl.ZoomCamera(zoomControl.value);
         PlayerPrefs.Save();
     }
 

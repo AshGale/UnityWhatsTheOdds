@@ -33,7 +33,7 @@ public class CameraConrol : MonoBehaviour
     {
         Vector3 newPosition = Vector3.MoveTowards(transform.position, centerPosition, zoomBy * GlobalVariables.data.SCROLL_SPEED);
         //Debug.Log($"{newPosition.y} >= {centerPosition.y} {GlobalVariables.data.MaxZoom}");
-        if(newPosition.y >= (centerPosition.y + GlobalVariables.data.MaxZoom))
+        if(newPosition.y >= (centerPosition.y + GlobalVariables.data.MAX_ZOOM))
         {
             transform.position = newPosition;
         }        
@@ -47,8 +47,8 @@ public class CameraConrol : MonoBehaviour
 
         float ammount = transform.position.y - zoom;
         Vector3 newPosition = Vector3.MoveTowards(transform.position, centerPosition, ammount);
-        Debug.Log($"{newPosition.y} >= {centerPosition.y} {GlobalVariables.data.MaxZoom} ammount = {ammount}");
-        if (newPosition.y >= (centerPosition.y + GlobalVariables.data.MaxZoom))
+        //Debug.Log($"{newPosition.y} >= {centerPosition.y} {GlobalVariables.data.MAX_ZOOM} ammount = {ammount}");
+        if (newPosition.y >= (centerPosition.y + GlobalVariables.data.MAX_ZOOM))
         {
             transform.position = newPosition;
         }

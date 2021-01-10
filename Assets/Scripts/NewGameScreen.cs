@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using TMPro;
+using System;
 
 public class NewGameScreen : MonoBehaviour
 {
@@ -25,7 +26,7 @@ public class NewGameScreen : MonoBehaviour
     public GameObject included4;
     public GameObject notPlaying4;
 
-    internal IEnumerator SetDataOnNewGameScreen()//Sets and controles the data for NewGameScreen
+    public void SetDataOnNewGameScreen()//Sets and controles the data for NewGameScreen
     {
         //newGameScreen
         // - could search player prefs for last setup, but doing quickstart
@@ -33,13 +34,11 @@ public class NewGameScreen : MonoBehaviour
         if (PlayerPrefs.HasKey("cameraSpeed"))
         {
             SetPlayerPreferences();
-            NewGameDefault();
         }
         else
         {
             NewGameDefault();
         }
-        yield return null;
     }
 
     private void SetPlayerPreferences()
@@ -50,6 +49,14 @@ public class NewGameScreen : MonoBehaviour
             GlobalVariables.data.CAMERA_ROTATION_SPEED = speed;
         }
         GlobalVariables.data.SHOW_DICE_INFLATE_ANIMATION = bool.Parse(PlayerPrefs.GetString("diceInflate"));
+        name1.text = PlayerPrefs.HasKey("PLAYER1_NAME") ? PlayerPrefs.GetString("PLAYER1_NAME") : GlobalVariables.data.PLAYER1_NAME;
+        name2.text = PlayerPrefs.HasKey("PLAYER2_NAME") ? PlayerPrefs.GetString("PLAYER2_NAME") : GlobalVariables.data.PLAYER2_NAME;
+        name3.text = PlayerPrefs.HasKey("PLAYER3_NAME") ? PlayerPrefs.GetString("PLAYER3_NAME") : GlobalVariables.data.PLAYER3_NAME;
+        name4.text = PlayerPrefs.HasKey("PLAYER4_NAME") ? PlayerPrefs.GetString("PLAYER4_NAME") : GlobalVariables.data.PLAYER4_NAME;
+        colour1.value = PlayerPrefs.HasKey("PLAYER1_COLOUR") ? PlayerPrefs.GetInt("PLAYER1_COLOUR") : 0;
+        colour2.value = PlayerPrefs.HasKey("PLAYER2_COLOUR") ? PlayerPrefs.GetInt("PLAYER2_COLOUR") : 1;
+        colour3.value = PlayerPrefs.HasKey("PLAYER3_COLOUR") ? PlayerPrefs.GetInt("PLAYER3_COLOUR") : 2;
+        colour4.value = PlayerPrefs.HasKey("PLAYER4_COLOUR") ? PlayerPrefs.GetInt("PLAYER4_COLOUR") : 3;
     }
 
     private void NewGameDefault()
@@ -92,6 +99,18 @@ public class NewGameScreen : MonoBehaviour
         GlobalVariables.data.PLAYER2_COLOUR = colour2.options[colour2.value].text;
         GlobalVariables.data.PLAYER3_COLOUR = colour3.options[colour3.value].text;
         GlobalVariables.data.PLAYER4_COLOUR = colour4.options[colour4.value].text;
+    }
+
+    internal void SetPlayerPrefs()
+    {
+        PlayerPrefs.SetString("PLAYER1_NAME", name1.text);
+        PlayerPrefs.SetString("PLAYER2_NAME", name2.text);
+        PlayerPrefs.SetString("PLAYER3_NAME", name3.text);
+        PlayerPrefs.SetString("PLAYER4_NAME", name4.text);
+        PlayerPrefs.SetInt("PLAYER1_COLOUR", colour1.value);
+        PlayerPrefs.SetInt("PLAYER2_COLOUR", colour2.value);
+        PlayerPrefs.SetInt("PLAYER3_COLOUR", colour3.value);
+        PlayerPrefs.SetInt("PLAYER4_COLOUR", colour4.value);
     }
 
     public void RemovePlayer1()

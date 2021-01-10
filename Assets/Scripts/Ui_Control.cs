@@ -36,8 +36,12 @@ public class Ui_Control : MonoBehaviour
 
     public void ContinueButton()
     {
-        //need save game functionallity, but could add in 
-        SetActiveScreens(ActiveSreen.InGameBanner);
+        if (gameControl.playerControl.players.Count > 0)
+        {
+            //need save game functionallity, but could add in 
+            SetActiveScreens(ActiveSreen.InGameBanner);
+        }
+            
     }
 
     public void MainMenuButton()
@@ -75,13 +79,14 @@ public class Ui_Control : MonoBehaviour
     public void NewGameMenuButton()
     {
         SetActiveScreens(ActiveSreen.NewGameMenu);
-        StartCoroutine(newGameScreen.SetDataOnNewGameScreen());
+        newGameScreen.SetDataOnNewGameScreen();
     }
 
     public void PlayGameButton()
     {
         //Global Data should be set in new game menue screen
         newGameScreen.SetGlobalData();//apply for use in gameSetup
+        newGameScreen.SetPlayerPrefs();
         SetActiveScreens(ActiveSreen.InGameBanner);
         StartCoroutine(gameControl.SetupNewGame());
     }

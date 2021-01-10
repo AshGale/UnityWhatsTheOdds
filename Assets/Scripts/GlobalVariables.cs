@@ -92,7 +92,8 @@ public class GlobalVariables : MonoBehaviour
     public float BOARD_CLEARANCE = 2.2f;
     public float TILE_CLEARANCE = 1.8f;
     public float HOP_DELAY_TIME = .2f;
-    public float MaxZoom = 2.5f;
+    public float CURRENT_ZOOM = 2.5f;
+    public float MAX_ZOOM = 2.5f;
 
     void Awake()
     {

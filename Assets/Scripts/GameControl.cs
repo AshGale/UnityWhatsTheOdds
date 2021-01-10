@@ -22,6 +22,9 @@ public class GameControl : MonoBehaviour
         Application.targetFrameRate = 60;
 
         //reset camera
+        //TODO revise to that mainCamera is in CameraControl, and passed into this
+        //then have link to load camera zoom when loading.
+        //additional, have camera position for each player NB have reset to default button in settings
         mainCamera.transform.position = new Vector3(3, 7, 0);//game start locaion
         mainCamera.transform.rotation = Quaternion.Euler(65f, 355f, 0f);//game start locaion
         mainCamera.transform.rotation.Normalize();
@@ -29,7 +32,7 @@ public class GameControl : MonoBehaviour
         //reset game components
         boardControl.SetToDefault();
         playerControl.SetToDefault();
-        SetToDefault();
+        this.SetToDefault();
 
         //then -> 
         StartCoroutine(KickOffNewGame());
