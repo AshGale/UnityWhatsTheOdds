@@ -3,7 +3,15 @@ guid: 5bbcf8d26309baf4a9f826771c5e38a6
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - rb: {instanceID: 0}
+  - cubeRenderer: {instanceID: 0}
+  - diceColour: {instanceID: 0}
+  - selectedDiceColour: {fileID: 2100000, guid: 5e232a962d90f0b4c8943bda81abe673,
+      type: 2}
+  - player: {instanceID: 0}
+  - tileControl: {instanceID: 0}
+  - child: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

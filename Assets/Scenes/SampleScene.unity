@@ -2047,9 +2047,9 @@ RectTransform:
   m_Father: {fileID: 1489162446}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 672, y: -328}
   m_SizeDelta: {x: 1000, y: 100}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &143496616
@@ -4428,6 +4428,12 @@ MonoBehaviour:
   PLAYER_2_CAMERA_DEFAULT: {x: 65, y: 90, z: 0}
   PLAYER_3_CAMERA_DEFAULT: {x: 65, y: 180, z: 0}
   PLAYER_4_CAMERA_DEFAULT: {x: 65, y: 270, z: 0}
+  SIDE_ONE: {x: 270, y: 0, z: 0, w: -0.70710677}
+  SIDE_TWO: {x: 0, y: 0, z: 0, w: 1}
+  SIDE_THREE: {x: 0, y: 0, z: 90, w: 0.70710677}
+  SIDE_FOUR: {x: 180, y: 0, z: 0, w: -0.00000004371139}
+  SIDE_FIVE: {x: 0, y: 0, z: 270, w: -0.70710677}
+  SIDE_SIX: {x: 90, y: 0, z: 0, w: 0.70710677}
   SHOW_DICE_INFLATE_ANIMATION: 1
   CAMERA_ROTATION_SPEED: 60
   SCROLL_SPEED: 0.5
@@ -8860,9 +8866,9 @@ RectTransform:
   m_Father: {fileID: 1489162446}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 672, y: -28}
   m_SizeDelta: {x: 1000, y: 100}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1113322345
@@ -9199,9 +9205,9 @@ RectTransform:
   m_Father: {fileID: 1489162446}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 672, y: -478}
   m_SizeDelta: {x: 1000, y: 100}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1180683193
@@ -9351,7 +9357,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: MainMenu
+  m_text: Main Menu
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
@@ -11581,7 +11587,7 @@ GameObject:
   - component: {fileID: 1483643630}
   - component: {fileID: 1483643629}
   m_Layer: 5
-  m_Name: Cancel
+  m_Name: Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11625,7 +11631,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Cancel
+  m_text: Back
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -11720,7 +11726,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1489162444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11820,7 +11826,7 @@ GameObject:
   - component: {fileID: 1514867012}
   - component: {fileID: 1514867011}
   m_Layer: 5
-  m_Name: CancelButton
+  m_Name: BackButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11890,7 +11896,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 421120690}
-        m_MethodName: CancelSettings
+        m_MethodName: BackSettings
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -15180,7 +15186,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Tile: {fileID: 1304353984007444321, guid: 76f1275cf1c441c48967c305381d5b4f, type: 3}
-  Dice: {fileID: 3943479489302451635, guid: 2d377352a26bef142ab37c3693280f05, type: 3}
+  Dice: {fileID: 1397390630746169675, guid: 532afcc47101b914aa37feac038345f1, type: 3}
   WhiteMaterial: {fileID: 2100000, guid: f4e899277bc28c246b0a3eceaa5fdf0a, type: 2}
   BlackMaterial: {fileID: 2100000, guid: 5e76fffca9916d14f895091de3b8b95a, type: 2}
   gameControl: {fileID: 428733563}
@@ -16300,9 +16306,9 @@ RectTransform:
   m_Father: {fileID: 1489162446}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 672, y: -178}
   m_SizeDelta: {x: 1000, y: 100}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1869736690
@@ -17276,7 +17282,7 @@ RectTransform:
   m_AnchorMin: {x: 0.8, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -86.44379, y: 0}
+  m_SizeDelta: {x: -86.40002, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1980186676
 MonoBehaviour:
@@ -17496,9 +17502,9 @@ RectTransform:
   m_Father: {fileID: 1489162446}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 672, y: -628}
   m_SizeDelta: {x: 1000, y: 100}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &2009646259

@@ -79,6 +79,20 @@ public class GlobalVariables : MonoBehaviour
     public Vector3 PLAYER_3_CAMERA_DEFAULT = new Vector3(65, 180, 0);
     public Vector3 PLAYER_4_CAMERA_DEFAULT = new Vector3(65, 270, 0);
 
+    /*public Quaternion SIDE_ONE = Quaternion.Euler(new Vector3(90, 0, 0));
+    public Quaternion SIDE_TWO = Quaternion.Euler(new Vector3(180, 0, 0));
+    public Quaternion SIDE_THREE = Quaternion.Euler(new Vector3(0, 0, 270));
+    public Quaternion SIDE_FOUR = Quaternion.Euler(new Vector3(0, 0, 0));
+    public Quaternion SIDE_FIVE = Quaternion.Euler(new Vector3(0, 0, 90));
+    public Quaternion SIDE_SIX = Quaternion.Euler(new Vector3(270, 0, 0));*/
+
+    public Quaternion SIDE_ONE = Quaternion.Euler(270, 0, 0);
+    public Quaternion SIDE_TWO = Quaternion.Euler(0, 0, 0);
+    public Quaternion SIDE_THREE = Quaternion.Euler(0, 0, 90);
+    public Quaternion SIDE_FOUR = Quaternion.Euler(180, 0, 0);
+    public Quaternion SIDE_FIVE = Quaternion.Euler(0, 0, 270);
+    public Quaternion SIDE_SIX = Quaternion.Euler(90, 0, 0);
+
     public bool SHOW_DICE_INFLATE_ANIMATION = true;
 
     public int CAMERA_ROTATION_SPEED = 60;

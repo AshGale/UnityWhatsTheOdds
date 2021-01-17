@@ -528,6 +528,8 @@ public class BoardControl : MonoBehaviour
         diceControl.tileControl = targetTile;
         targetTile.SetDiceOnTile(diceControl);
         newDice.name = player.name;
+        newDice.transform.rotation = Quaternion.Euler(GlobalVariables.data.SIDE_ONE.x, GlobalVariables.data.SIDE_ONE.y, GlobalVariables.data.SIDE_ONE.z);
+        newDice.transform.rotation.Normalize();
         newDice.transform.SetParent(player.transform);
         player.diceOwned.Add(newDice);
 
@@ -594,13 +596,13 @@ public class BoardControl : MonoBehaviour
             startingTile = boardTiles[(int)player.startLocation.x, (int)player.startLocation.z];
             lowerDice = CreateDiceAt(startingTile, player, true);
             lowerDice.value = 6;
-            lowerDice.transform.eulerAngles = Quaternion.Euler(180, 0, 0).eulerAngles;
+            lowerDice.transform.rotation = Quaternion.Euler(GlobalVariables.data.SIDE_SIX.x, GlobalVariables.data.SIDE_SIX.y, GlobalVariables.data.SIDE_SIX.z);
             lowerDice.transform.rotation.Normalize();
             lowerDice.transform.position = player.startLocation;
 
             upperDice = CreateDiceAt(startingTile, player, true);
             upperDice.value = 6;
-            upperDice.transform.eulerAngles = Quaternion.Euler(180, 0, 0).eulerAngles;
+            upperDice.transform.rotation = Quaternion.Euler(GlobalVariables.data.SIDE_SIX.x, GlobalVariables.data.SIDE_SIX.y, GlobalVariables.data.SIDE_SIX.z);
             upperDice.transform.rotation.Normalize();
 
             CreateBase(upperDice, lowerDice);

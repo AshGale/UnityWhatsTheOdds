@@ -218,12 +218,20 @@ public class Dice_Control : MonoBehaviour
         Quaternion target = new Quaternion();
         switch(newValue)
         {
+            /*
             case 1: target = Quaternion.Euler(0, 0, 0); break;
             case 2: target = Quaternion.Euler(270, 0, 0); break;
             case 3: target = Quaternion.Euler(0, 0, 270); break;
             case 4: target = Quaternion.Euler(90, 0, 0); break;
             case 5: target = Quaternion.Euler(0, 0, 90); break;
             case 6: target = Quaternion.Euler(180, 0, 0); break;
+            */
+            case 1: target = Quaternion.Euler(GlobalVariables.data.SIDE_ONE.x, GlobalVariables.data.SIDE_ONE.y, GlobalVariables.data.SIDE_ONE.z); break;
+            case 2: target = Quaternion.Euler(GlobalVariables.data.SIDE_TWO.x, GlobalVariables.data.SIDE_TWO.y, GlobalVariables.data.SIDE_TWO.z); break;
+            case 3: target = Quaternion.Euler(GlobalVariables.data.SIDE_THREE.x, GlobalVariables.data.SIDE_THREE.y, GlobalVariables.data.SIDE_THREE.z); break;
+            case 4: target = Quaternion.Euler(GlobalVariables.data.SIDE_FOUR.x, GlobalVariables.data.SIDE_FOUR.y, GlobalVariables.data.SIDE_FOUR.z); break;
+            case 5: target = Quaternion.Euler(GlobalVariables.data.SIDE_FIVE.x, GlobalVariables.data.SIDE_FIVE.y, GlobalVariables.data.SIDE_FIVE.z); break;
+            case 6: target = Quaternion.Euler(GlobalVariables.data.SIDE_SIX.x, GlobalVariables.data.SIDE_SIX.y, GlobalVariables.data.SIDE_SIX.z); break;
         }        
 
         //while loop ends before the if can take effect -> 
