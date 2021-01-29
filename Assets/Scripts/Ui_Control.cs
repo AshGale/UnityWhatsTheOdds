@@ -1,10 +1,9 @@
-﻿using System.Collections;
+﻿using UnityEngine;
 using TMPro;
-using UnityEngine;
 
 public enum ActiveSreen
 {
-     MainMenu, NewGameMenu, InGameMenu, InGameBanner, SettingsMenu
+     MainMenu, NewGameMenu, InGameMenu, InGameBanner, SettingsMenu, Tutorial
 }
 
 public class Ui_Control : MonoBehaviour
@@ -12,6 +11,7 @@ public class Ui_Control : MonoBehaviour
     public GameControl gameControl;
     public NewGameScreen newGameScreen;
     public SettingsScreen settingsScreen;
+    public TutorialControl tutorialControl;
 
     public Material SelectedMaterial;
     public Material DefaultMaterial;
@@ -23,6 +23,7 @@ public class Ui_Control : MonoBehaviour
     public GameObject gameMenu;
     public GameObject gameBanner;
     public GameObject settings;
+    public GameObject tutorial;
 
     // Start is called before the first frame update
     void Start()
@@ -47,6 +48,12 @@ public class Ui_Control : MonoBehaviour
     public void MainMenuButton()
     {
         SetActiveScreens(ActiveSreen.MainMenu);
+    }
+
+    public void ShowTutorialPopup()
+    {
+        SetActiveScreens(ActiveSreen.Tutorial);
+        tutorialControl.ShowPopup();
     }
 
     public void SettingsButton()
@@ -106,6 +113,58 @@ public class Ui_Control : MonoBehaviour
 
     }
     //----------------------------------------------------Game Banner End--------------------------------------------------------------
+    //----------------------------------------------------Tutorial Start--------------------------------------------------------------
+
+    public void LaunchTutorial()
+    {
+        //This should probably be a scene
+        //SetActiveScreens(ActiveSreen.InGameBanner);
+        //SetActiveScreens(ActiveSreen.Tutorial);
+        tutorialControl.StartTutorial();
+        //
+    }
+
+    public void SkipTutorial()
+    {
+        SetActiveScreens(ActiveSreen.MainMenu);
+        //This should probably be a scene
+
+        //launch set of text boxes with explination
+        /*
+         * Game overview
+         *      Turn base statigy board game, where last player standing wins.
+         *      each turn use your actions to inprove your strength for the next round.
+         *      combine dice together, to make stronger unites, and earn as much actions per turns as possable
+         *      cripple the other players by attacking there outposts, and restrict player acions by reducing workings
+         * describe pieces
+         *  Outposts
+         *      start the game with one, is 12 in value becomes a value 6 soldier when killed
+         *      can create new pieces adjacent to the outpost, ie in all four directions
+         *      can add value to adjact dice up to a value of 6
+         *      can attack enemy units
+         *  workers 
+         *      generate actions per turn based on their value
+         *      1 generates 1 action
+         *      3 generates 2 actions
+         *      5 generates 3 actions
+         *  soldier
+         *      can attack other enemy pieces
+         *      this pice is essential to 
+         *      value 6 soldiers, can move onto another 6, and create a value 12 outpost
+         * win conditions
+         *      knock out all player, or players have no moves at the start of their turn
+         * loose condition
+         *      you start the turn with 0 actions eg you have 3 units with value 4 4 6 will give 0 actions next round
+         * illigal actions
+         *      eg outposts generate units move than 1 square away
+         *      moving a value 3 unit onto a 6
+         * Bonus tips
+         *      you can move a 6 into a 2 and it will become a 6, leaving a 2 behind
+         *      
+         */
+    }
+
+    //----------------------------------------------------Tutorial End--------------------------------------------------------------
 
     //// Update is called once per frame
     //void Update()
@@ -120,6 +179,7 @@ public class Ui_Control : MonoBehaviour
         gameMenu.SetActive(false);
         mainMenu.SetActive(false);
         settings.SetActive(false);
+        tutorial.SetActive(false);
         gameControl.allowInput = false;
 
         switch (activeScreen)
@@ -149,6 +209,11 @@ public class Ui_Control : MonoBehaviour
             case ActiveSreen.SettingsMenu:
                 {
                     settings.SetActive(true);
+                    break;
+                }
+            case ActiveSreen.Tutorial:
+                {
+                    tutorial.SetActive(true);
                     break;
                 }
         }

@@ -381,6 +381,8 @@ public class BoardControl : MonoBehaviour
             return; 
         }
 
+        //TODO fix bug where head outpost when less result is < 12, causes crash
+
         int sum = selectedDice.value + targetDice.value;
         if (sum >= 12)
         {
