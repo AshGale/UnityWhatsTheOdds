@@ -27,61 +27,6 @@ public class Dice_Control : MonoBehaviour
         diceColour = GetComponent<Renderer>().material = diceColour;
     }
 
-    //private void Update()
-    //{
-    //    if(selected)
-    //    {
-    //        //run animation for slected, //need parent to run relative
-    //        if (showSelected)
-    //        {
-    //            StartCoroutine(ShowSelectedAnimation()); here
-    //        }
-    //    }
-    //}
-
-    //private void FixedUpdate()
-    //{       
-    //    ////replace with coroutines https://youtu.be/5L9ksCs6MbE?t=192
-    //    //if (selected)
-    //    //{
-    //    //    if (Input.anyKeyDown && !moving)
-    //    //    {
-    //    //        switch (Input.inputString)
-    //    //        {
-    //    //            case "h": moveHome(); break;
-    //    //            case "w": moveForward(); break;
-    //    //            case "a": moveLeft(); break;
-    //    //            case "s": moveBack(); break;
-    //    //            case "d": moveRight(); break;
-    //    //        }
-    //    //    }
-    //    //}
-    //    //if (moving)
-    //    //{
-    //    //    // Distance moved equals elapsed time times speed..
-    //    //    float distCovered = (Time.time - startTime) * moveSpeed;
-
-    //    //    // Fraction of journey completed equals current distance divided by total distance.
-    //    //    float fractionOfJourney = distCovered / journeyLength;
-
-    //    //    transform.position = Vector3.Lerp(origin, destination, fractionOfJourney);
-    //    //    if (fractionOfJourney >= 1)
-    //    //    {
-    //    //        //spap to nearest tile. todo make sure if in the center
-    //    //        transform.position = new Vector3((float)Mathf.Round(destination.x), 
-    //    //            transform.position.y, 
-    //    //            (float)Mathf.Round(destination.z));
-    //    //        moving = false;
-    //    //        //todo, set dice x,z and tile not empty
-    //    //    }
-    //    //}
-    //    //else
-    //    //{
-    //    //    //free movement not applicable anymore
-    //    //    //transform.Translate(moveSpeed * GetX() * Time.deltaTime, 0f, moveSpeed * GetZ() * Time.deltaTime);
-    //    //}
-    //}
-
     public void SetSelected()
     {
         selected = true;
@@ -127,6 +72,7 @@ public class Dice_Control : MonoBehaviour
         }
     }
 
+    //finally time to move to game control, causes null pointer
     public IEnumerator ShowSelectedAnimation()
     {
         bool showInflate = GlobalVariables.data.SHOW_DICE_INFLATE_ANIMATION;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum TutorialPage
 {
-    Popup, OverView, Pieces, Outposts, Soldiers, Workers, WinCondition, LooseCondition, IlligalMoves, Extra
+    Popup, OverView, Pieces, Outposts, Soldiers, Workers, WinCondition, LooseCondition, IlligalMoves, Extra, HowToPlay
 }
 
 public class TutorialControl : MonoBehaviour
@@ -22,6 +22,7 @@ public class TutorialControl : MonoBehaviour
     public GameObject looseConditions;
     public GameObject illigalMoves;
     public GameObject extra;
+    public GameObject howToPlay;
 
     public void StartTutorial()
     {
@@ -73,10 +74,14 @@ public class TutorialControl : MonoBehaviour
         SetTutorialPage(TutorialPage.IlligalMoves);
     }
 
-
     public void ShowExtra()
     {
         SetTutorialPage(TutorialPage.Extra);
+    }
+
+    public void ShowHowToPlay()
+    {
+        SetTutorialPage(TutorialPage.HowToPlay);
     }
 
     public void SetTutorialPage(TutorialPage page)
@@ -91,6 +96,7 @@ public class TutorialControl : MonoBehaviour
         looseConditions.SetActive(false);
         illigalMoves.SetActive(false);
         extra.SetActive(false);
+        howToPlay.SetActive(false);
         //gameControl.allowInput = false;
 
         switch (page)
@@ -143,6 +149,11 @@ public class TutorialControl : MonoBehaviour
             case TutorialPage.Extra:
                 {
                     extra.SetActive(true);
+                    break;
+                }
+            case TutorialPage.HowToPlay:
+                {
+                    howToPlay.SetActive(true);
                     break;
                 }
         }

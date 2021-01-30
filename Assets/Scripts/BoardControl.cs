@@ -381,10 +381,37 @@ public class BoardControl : MonoBehaviour
             return; 
         }
 
-        //TODO fix bug where head outpost when less result is < 12, causes crash
-
         int sum = selectedDice.value + targetDice.value;
-        if (sum >= 12)
+        if (targetDice.isBase)
+        {
+            if (sum > 6)
+            {
+                Debug.Log($"Reenforcing outpost from {targetDice.value} to 6");
+                await HopTo(path, selectedDice);
+                StartCoroutine(targetDice.ChangeDiceValue(6));
+                StartCoroutine(selectedDice.ChangeDiceValue(sum - 6));
+            }else if (sum == 6)
+            {
+                Debug.Log($"Absorbing unit, from {targetDice.value} to 6");
+                await HopTo(path, selectedDice);
+                StartCoroutine(targetDice.ChangeDiceValue(6));
+                DestroySingleDice(selectedDice);
+                UpdateBoardMeta(selectedDice.tileControl, targetDice.tileControl, false);
+            }else
+            {
+                Debug.Log($"Reenforcing outpost from {targetDice.value} to " + sum);
+                await HopTo(path, selectedDice);
+                StartCoroutine(targetDice.ChangeDiceValue(sum));
+                DestroySingleDice(selectedDice);
+                UpdateBoardMeta(selectedDice.tileControl, targetDice.tileControl, false);
+            }
+            //targetDice.SetSelected();//crashes here
+            //gameControl.currentySelected = targetDice;
+            gameControl.playerControl.TakenMove(path.Count);
+            gameControl.AllowInput();
+            return;
+        }
+        else if (sum >= 12)
         {
             if (targetDice.isBase)
             {
@@ -408,7 +435,7 @@ public class BoardControl : MonoBehaviour
             Debug.Log($"Setting target from {targetDice.value} to 6");
             await HopTo(path, selectedDice);
             StartCoroutine(targetDice.ChangeDiceValue(6));
-            StartCoroutine(selectedDice.ChangeDiceValue(sum - 6));;
+            StartCoroutine(selectedDice.ChangeDiceValue(sum - 6));
         } else if (sum <= 6)
         {
             await HopTo(path, selectedDice);
@@ -514,6 +541,8 @@ public class BoardControl : MonoBehaviour
     public void DestroySingleDice(Dice_Control diceToDestroy, bool removeTileDice = true)
     {
         if (removeTileDice) diceToDestroy.tileControl.RemoveDiceOnTile();
+        diceToDestroy.SetDeselected();
+        diceToDestroy.StopAllCoroutines();
         diceToDestroy.player.diceOwned.Remove(diceToDestroy.gameObject);
         Destroy(diceToDestroy.gameObject);
         //gameControl.AllowInput();//check here for if there is allow input issues

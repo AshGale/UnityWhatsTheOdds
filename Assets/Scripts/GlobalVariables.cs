@@ -57,8 +57,8 @@ public class GlobalVariables : MonoBehaviour
     public string PLAYER3_COLOUR = "Teal";
     public string PLAYER4_COLOUR = "Purple";
 
-    public string UI_MOVES_TEXT = "Moves: ";
-    public string UI_TURN_TEXT = "Players Turn: ";
+    public string UI_ACTIONS_TEXT = "Actions: ";
+    public string UI_TURN_TEXT = "Team: ";
 
     public int WIDTH = 8;
     public int DEPTH = 8;

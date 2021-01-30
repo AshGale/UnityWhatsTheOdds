@@ -15,8 +15,8 @@ public class Ui_Control : MonoBehaviour
 
     public Material SelectedMaterial;
     public Material DefaultMaterial;
-    public TextMeshProUGUI playersMoves;
-    public TextMeshProUGUI playersTurn;
+    public TextMeshProUGUI playerActionsText;
+    public TextMeshProUGUI teamNameText;
 
     public GameObject mainMenu;
     public GameObject newGameMenu;
@@ -28,8 +28,8 @@ public class Ui_Control : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        playersMoves.text = GlobalVariables.data.UI_MOVES_TEXT + "0";
-        playersTurn.text = GlobalVariables.data.UI_TURN_TEXT + "";
+        playerActionsText.text = GlobalVariables.data.UI_ACTIONS_TEXT + "0";
+        teamNameText.text = GlobalVariables.data.UI_TURN_TEXT + "";
         SetActiveScreens(ActiveSreen.MainMenu);
     }
 
@@ -102,14 +102,14 @@ public class Ui_Control : MonoBehaviour
     //----------------------------------------------------Game Banner Start--------------------------------------------------------------
     public void UpdateMovesDisplay(int moves)
     {
-        playersMoves.text = GlobalVariables.data.UI_MOVES_TEXT + moves;
+        playerActionsText.text = GlobalVariables.data.UI_ACTIONS_TEXT + moves;
     }
 
     public void UpdatePlayersTurnDisplay(string playerName, Material playerMaterial)
     {
         //playersTurn.text = GlobalVariables.data.UI_TURN_TEXT + playerName;
-        playersTurn.text = playerName;
-        playersTurn.color = playerMaterial.color;
+        teamNameText.text = playerName;
+        teamNameText.color = playerMaterial.color;
 
     }
     //----------------------------------------------------Game Banner End--------------------------------------------------------------
