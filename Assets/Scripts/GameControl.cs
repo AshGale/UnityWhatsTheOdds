@@ -9,12 +9,14 @@ public class GameControl : MonoBehaviour
     public PlayerControl playerControl;
     public BoardControl boardControl;
     public Ui_Control ui_Control;
+    public CameraConrol cameraConrol;
+    public AiControl aiControl;
 
     public Camera mainCamera;
     private Ray ray;
     private RaycastHit hit;
-    public Dice_Control currentySelected;
     public GameObject clickedObject;
+    public Dice_Control currentySelected;
     public bool allowInput;
 
     internal IEnumerator SetupNewGame()//Play game on NewGameScren
@@ -44,7 +46,7 @@ public class GameControl : MonoBehaviour
         //yield return new WaitForSeconds(.5f);//allow for setup to finish
         playerControl.AddPlayers();
         boardControl.SetupPlayerPieces(playerControl.players);
-        playerControl.GenerateIncomeForPlayer();
+        playerControl.PrepairePlayerForTurn();
         //ui_Control.SetGameBannerVisable(true);
         AllowInput();
         yield return null;
@@ -133,7 +135,11 @@ public class GameControl : MonoBehaviour
                         if(clickedTile == null)
                         {
                             Debug.Log($"object too far to consider Creating dice");
-                            boardControl.InvalidMove(clickedTile);
+                            Dice_Control dice_Control = clickedObject.GetComponent<Dice_Control>();
+                            if(dice_Control != null)
+                            {
+                                boardControl.InvalidMove(dice_Control.tileControl);
+                            }                         
                             AllowInput();
                         } else
                         {

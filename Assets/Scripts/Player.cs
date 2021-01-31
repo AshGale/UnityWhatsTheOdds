@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     public Vector3 startLocation;
     public Vector3 cameraPosition;
     public int numberOfMoves;
+    public AiControl ai;
 
     public void Init(string playerName, Vector3 startLocation, Material playerColour, Vector3 cameraPosition)
     {

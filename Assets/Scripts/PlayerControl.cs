@@ -7,17 +7,17 @@ using UnityEngine;
 public class PlayerControl : MonoBehaviour
 {
     public GameControl gameControl;
-    public GameObject Player;
-    public CameraConrol mainCamera;
-    public int numberOfPlayers;
-    public List<Player> players;
-    public Player activePlayer;
-    public int indexOfCurrentPlayer;
 
     public Material blueColour;
     public Material redColour;
     public Material tealColour;
     public Material purpleColour;
+
+    public GameObject Player;
+    public int numberOfPlayers;
+    public List<Player> players;
+    public Player activePlayer;
+    public int indexOfCurrentPlayer;
 
     internal IEnumerator KickOffSetup()
     {
@@ -76,82 +76,102 @@ public class PlayerControl : MonoBehaviour
         }
         indexOfCurrentPlayer = 0;
         activePlayer = players.ElementAt(indexOfCurrentPlayer);
-        
+
+    }
+
+    public int GenerateIncomeForPlayer(List<GameObject> playersDiceOwned)
+    {
+        int dice_value;
+        Dice_Control dice_Control;
+        int moveForPlayer = 0;
+
+        foreach (GameObject dice in playersDiceOwned)
+        {
+            dice_Control = dice.GetComponent<Dice_Control>();
+            dice_value = dice_Control.value;
+            if (dice_Control.isBase)
+            {
+                moveForPlayer += GlobalVariables.data.MOVES_FOR_BASE;
+            }
+            else if (dice_value % 2 == 1)
+            {
+                switch (dice_value)
+                {
+                    case 1: moveForPlayer += GlobalVariables.data.WORKER_INCOME_1; break;
+                    case 3: moveForPlayer += GlobalVariables.data.WORKER_INCOME_3; break;
+                    case 5: moveForPlayer += GlobalVariables.data.WORKER_INCOME_5; break;
+                }
+            }
+        }
+        return moveForPlayer;
     }
 
     internal void TakenMove(int moveValue = 1)
     {
-        //gameControl.AllowInput();
         activePlayer.numberOfMoves -= moveValue;
         if (activePlayer.numberOfMoves <= 0)
+        {
+            gameControl.DisalowInput();
+            gameControl.currentySelected.SetDeselected();
+            gameControl.currentySelected = null;
             NextPlayer();
-        gameControl.ui_Control.UpdateMovesDisplay(activePlayer.numberOfMoves);
+        }
+        else
+        {
+            gameControl.ui_Control.UpdateMovesDisplay(activePlayer.numberOfMoves);
+        }
     }
 
-    public void NextPlayer ()
+    public void IncrementCurrentPlayer()
     {
         indexOfCurrentPlayer++;
-        if(indexOfCurrentPlayer >= players.Count)
+        if (indexOfCurrentPlayer >= players.Count)
         {
             indexOfCurrentPlayer = 0;
         }
         activePlayer = players.ElementAt(indexOfCurrentPlayer);
-        Debug.Log($"it is now {activePlayer.name}'s turn of {players.Count} players");
         
-        if(gameControl.currentySelected != null)
+    }
+
+    public void NextPlayer ()
+    {
+
+        if (gameControl.currentySelected != null)
         {
             gameControl.currentySelected.SetDeselected();
             gameControl.currentySelected = null;
         }
-            
-        GenerateIncomeForPlayer();
+
+        IncrementCurrentPlayer();
+        PrepairePlayerForTurn();
     }
 
-    public void GenerateIncomeForPlayer()
+    public void PrepairePlayerForTurn()
     {
-        int dice_value;
-        Dice_Control dice_Control;
-        foreach (GameObject dice in activePlayer.diceOwned)
-        {
-            dice_Control = dice.GetComponent<Dice_Control>();
-            dice_value = dice_Control.value;
-            if(dice_Control.isBase)
-            {
-                activePlayer.numberOfMoves += GlobalVariables.data.MOVES_FOR_BASE;
-            } else if (dice_value % 2 == 1)
-            {
-                switch (dice_value)
-                {
-                    case 1: activePlayer.numberOfMoves += GlobalVariables.data.INCOME_1; break;
-                    case 3: activePlayer.numberOfMoves += GlobalVariables.data.INCOME_3; break;
-                    case 5: activePlayer.numberOfMoves += GlobalVariables.data.INCOME_5; break;
-                }
-            }
-        }
+        int actionsForPlayer = GenerateIncomeForPlayer(activePlayer.diceOwned);
 
-        if (activePlayer.numberOfMoves == 0)
+        if (actionsForPlayer == 0)
         {
-            Debug.Log($"player {activePlayer.name} has no moves, and is out of the game!");
-            RemovePlayer(activePlayer);
-            if (players.Count > 1)
-            {
-                activePlayer = players.ElementAt(indexOfCurrentPlayer);
-                Debug.Log($"it is now {activePlayer.name}'s turn of {players.Count} players");
-                GenerateIncomeForPlayer();
-            }
-            else
-            {
-                Debug.Log($"setting to last player!");
-                NextPlayer();
-                Debug.Log($"Only player {players[0].name} remains. \n Game Over, well done!");
-                gameControl.ui_Control.SetActiveScreens(ActiveSreen.MainMenu);
-            }
+            EliminatePlayer();
         }
         else
         {
-            gameControl.ui_Control.UpdatePlayersTurnDisplay(activePlayer.playerName, activePlayer.playerColour);               
-            gameControl.ui_Control.UpdateMovesDisplay(activePlayer.numberOfMoves);
-            StartCoroutine(mainCamera.GlidePosition(activePlayer.cameraPosition));
+            Debug.Log($"it is now {activePlayer.name}'s turn, with {actionsForPlayer} actions");
+            activePlayer.numberOfMoves = actionsForPlayer;
+            StartPlayerTurn();
+        }
+    }
+
+    public void StartPlayerTurn()
+    {
+        int dice_value;
+        Dice_Control dice_Control;
+        gameControl.ui_Control.UpdatePlayersTurnDisplay(activePlayer.playerName, activePlayer.playerColour);
+        gameControl.ui_Control.UpdateMovesDisplay(activePlayer.numberOfMoves);
+        StartCoroutine(gameControl.cameraConrol.GlidePosition(activePlayer.cameraPosition));
+
+        if (GlobalVariables.data.SHOW_FLASH_START_TURN)
+        {
             foreach (GameObject dice in activePlayer.diceOwned)
             {
                 dice_Control = dice.GetComponent<Dice_Control>();
@@ -164,6 +184,43 @@ public class PlayerControl : MonoBehaviour
                 StartCoroutine(dice_Control.FlashForNewTurn());
             }
         }
+
+        if (activePlayer.ai)
+        {
+            AiPlayersTurn();
+        } else
+        {
+            gameControl.AllowInput();
+        }
+    }
+
+    public void AiPlayersTurn()
+    {
+        gameControl.aiControl.EasyAi();
+    }
+
+    public void EliminatePlayer()
+    {
+        Debug.Log($"player {activePlayer.name} has no moves, and is eliminated from the game!");
+        RemovePlayer(activePlayer);
+        if (players.Count > 1)
+        {
+            activePlayer = players.ElementAt(indexOfCurrentPlayer);
+            PrepairePlayerForTurn();
+        }
+        else
+        {
+            ShowGameOver();
+        }
+    }
+
+    public void ShowGameOver()
+    {
+        //have a game over screen. new game or continue
+        Debug.Log($"setting to last player!");
+        NextPlayer();
+        Debug.Log($"Only the team {players[0].name} remains. \n Game Over, well done!");
+        gameControl.ui_Control.SetActiveScreens(ActiveSreen.MainMenu);
     }
 
     public void RemovePlayer(Player playerToRemove)

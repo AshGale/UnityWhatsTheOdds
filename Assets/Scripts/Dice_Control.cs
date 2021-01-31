@@ -146,6 +146,7 @@ public class Dice_Control : MonoBehaviour
         
     }
 
+    //todo update to be an Await
     public IEnumerator ChangeDiceValue(int newValue)
     {
         //workaround as kept randommly stopping at a rotaiton -> need animation

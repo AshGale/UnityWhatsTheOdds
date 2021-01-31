@@ -10,17 +10,13 @@ public class GlobalVariables : MonoBehaviour
      * ToDo List:
      * Base creation, not next to other base
      * 
-     * Add in indicator for ammount of moves as banner or item at the bottom
+     * Add in indicator for ammount of moves as banner or item at the bottom (done)
      * - make new Prefab for dice and moves indicator, to be placed on your side of board.
      * - show number of moves in green dice on player rack
      * 
-     * Start the Valid moves based on ammount of moves display
+     * Show the Valid moves based on ammount of moves display
      * - will requre you too add in layer, or change material of the tiles OR indicate invalid move
      * 
-     * Add in Menue for new game 
-     * - new scene for menue and set to 0
-     * - 2 player game by default
-     * - be able to change number of players for new game, then generate board
      * 
      * Change the creation to a dictionary que of eg 12 dice per player
      * - maybe indicate how many dice on eahc player in ui type thing
@@ -37,7 +33,8 @@ public class GlobalVariables : MonoBehaviour
      * Replace Path with struct
      * 
     * BUGS:
-    * 
+    * can make a quick move after you have done your last. this is due chance dice value is at the end of the change dice value. 
+    *  - update it to be a async await funciton, to ensure syncronus logic.
     * 
     * 
    */
@@ -63,9 +60,9 @@ public class GlobalVariables : MonoBehaviour
     public int WIDTH = 8;
     public int DEPTH = 8;
     public int MOVES_FOR_BASE = 3; 
-    public int INCOME_1 = 1;
-    public int INCOME_3 = 2;
-    public int INCOME_5 = 3;
+    public int WORKER_INCOME_1 = 1;
+    public int WORKER_INCOME_3 = 2;
+    public int WORKER_INCOME_5 = 3;
     //Dice
 
     //player
@@ -94,6 +91,7 @@ public class GlobalVariables : MonoBehaviour
     public Quaternion SIDE_SIX = Quaternion.Euler(90, 0, 0);
 
     public bool SHOW_DICE_INFLATE_ANIMATION = true;
+    public bool SHOW_FLASH_START_TURN = true;
 
     public int CAMERA_ROTATION_SPEED = 60;
     public float SCROLL_SPEED = .5f;
