@@ -3,8 +3,9 @@ using UnityEngine;
 
 public class TileControl : MonoBehaviour
 {
-    public bool validPathTile = true;
-    public bool possibleMove = false;
+    public bool validPathfindingTile = true;
+    public bool isEmptyTile = true;
+
     public Dice_Control diceOnTile;
     public Material tileColour;
     Color invalid = Color.red;
@@ -22,26 +23,28 @@ public class TileControl : MonoBehaviour
 
     public void SetPathValue(int pathValue) => this.pathValue = pathValue;
 
-    public void SetValidPath() => this.validPathTile = true;
+    public void SetValidPathfing() => this.validPathfindingTile = true;
 
-    public void InvalidPath() => this.validPathTile = false;
+    public void SetCanNotPassThrough() => this.validPathfindingTile = false;
 
-    public void SetPossibleMove() => this.possibleMove = true;
+    public void SetIsEmptyTile() => this.isEmptyTile = true;
 
-    public void NotPossibleMove() => this.possibleMove = false;
+    public void SetHasPieceOnTile() => this.isEmptyTile = false;
 
     public void ResetPathValue() => pathValue = -1;
 
     public void SetDiceOnTile(Dice_Control diceOnTile)
     {
         this.diceOnTile = diceOnTile;
-        validPathTile = false;
+        SetHasPieceOnTile();
+        SetCanNotPassThrough();
     }
 
     public void RemoveDiceOnTile()
     {
         this.diceOnTile = null;
-        validPathTile = true;
+        SetIsEmptyTile();
+        SetValidPathfing();
     }
 
     public void ShowPossibleMove() =>  StartCoroutine(IndicateColor(possible));

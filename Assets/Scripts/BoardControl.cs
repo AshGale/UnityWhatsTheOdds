@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -34,6 +33,13 @@ public class BoardControl : MonoBehaviour
         GenerateBoard();
         yield return null;
     }
+
+    public TileControl[,] GetBoardTiles()
+    {
+        return this.boardTiles;
+    }
+
+    //TODO move out to pahfinding fully
 
     internal List<TileControl> Pathfind(TileControl currentTile, TileControl clickedTile, int playerMoves)
     {
@@ -97,11 +103,11 @@ public class BoardControl : MonoBehaviour
         //    return path;
         //} 
 
-        clickedTile.SetValidPath();
+        clickedTile.SetValidPathfing();
         return FindPathToTile(currentTile, clickedTile, playerMoves);
     }
 
-    public List<TileControl> FindPathToTile(TileControl sorceTile, TileControl targetTile, int playerMoves)
+    public List<TileControl> FindPathToTile(TileControl sorceTile, TileControl targetTile, int playerMoves)//
     {
         BroadcastMessage("ResetPathValue");
         List<TileControl> adjacentTiles = new List<TileControl>();
@@ -122,7 +128,7 @@ public class BoardControl : MonoBehaviour
                     pathFound = true;
                     searchForPath = false;
                     tile.pathValue = pathCost;
-                    if (targetTile.diceOnTile != null) targetTile.InvalidPath();
+                    if (targetTile.diceOnTile != null) targetTile.SetCanNotPassThrough();
                     //Debug.Log($"Reached Target tile: {tile.tileIndex} cost {tile.pathValue}");
                     break;//for
                 }
@@ -169,7 +175,7 @@ public class BoardControl : MonoBehaviour
         }        
     }
 
-    private List<TileControl> GetValidAjacentTiles(TileControl tile)
+    private List<TileControl> GetValidAjacentTiles(TileControl tile)//
     {
         List<TileControl> validAdjacentTiles = new List<TileControl>();
 
@@ -185,7 +191,7 @@ public class BoardControl : MonoBehaviour
             } else
             {                
                 nextTile = boardTiles[nextIndex.x, nextIndex.y];
-                if (nextTile.validPathTile == false || nextTile.pathValue >= 0) //todo, will have to update and broadcase valid moves, ie dice on them, is invalid
+                if (nextTile.validPathfindingTile == false || nextTile.pathValue >= 0) //todo, will have to update and broadcase valid moves, ie dice on them, is invalid
                 {
                     //Debug.Log($"Skipped {nextTile.validMove} tile {nextTile.pathValue}: {nextTile.tileIndex}");
                 }
@@ -222,14 +228,13 @@ public class BoardControl : MonoBehaviour
                 else 
                 { 
                     pathAdjacentTiles.Add(nextTile); 
-                }
-                    
+                }                    
             }
         }
         return pathAdjacentTiles;
     }
 
-    private List<TileControl> GetPath(TileControl targetTile)
+    private List<TileControl> GetPath(TileControl targetTile)//
     {
         List<TileControl> path = new List<TileControl>() { targetTile };
 
@@ -299,7 +304,7 @@ public class BoardControl : MonoBehaviour
         UpdateBoardMeta(diceToMove.tileControl, tile);
     }
 
-    async Task HopTo(List<TileControl> path, Dice_Control diceToMove, bool targetTileHasDice = true)
+    public async Task HopTo(List<TileControl> path, Dice_Control diceToMove, bool targetTileHasDice = true)
     {
         int pathLength = path.Count;
 
@@ -655,6 +660,8 @@ public class BoardControl : MonoBehaviour
                 tileScript = tile.GetComponent<TileControl>();
                 tileScript.tileIndex = new Vector2Int( (int)x, (int)z );              
                 tileScript.tileColour = WhiteTile == true ? WhiteMaterial : BlackMaterial;
+                tileScript.SetIsEmptyTile();
+                tileScript.SetValidPathfing();
                 tile.name = tileName;
                 tile.transform.SetParent(gameObject.transform);//set the new tile to the BoardGrid
 

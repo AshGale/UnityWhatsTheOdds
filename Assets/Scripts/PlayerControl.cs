@@ -52,6 +52,12 @@ public class PlayerControl : MonoBehaviour
                 GlobalVariables.data.PLAYER_2_START,
                 GetPlayerColour(GlobalVariables.data.PLAYER2_COLOUR),
                 GlobalVariables.data.PLAYER_2_CAMERA_DEFAULT);
+
+            //for testing
+            player.GetComponent<Player>().ai = gameControl.aiControl;
+
+
+
             players.Add(player.GetComponent<Player>());
         }
         if (newGameScreen.included3.activeSelf)
@@ -78,6 +84,76 @@ public class PlayerControl : MonoBehaviour
         activePlayer = players.ElementAt(indexOfCurrentPlayer);
 
     }
+
+
+    //-------------------------------------------------------------------Helper functions for ai
+    public List<Dice_Control> GetAllPlayerWorkers(Player player)
+    {
+        List<Dice_Control> workers = new List<Dice_Control>();
+        foreach (Dice_Control dice in player.GetComponentsInChildren<Dice_Control>())
+        {
+            //is dice value odd ie worker
+            if (dice.value % 2 == 1 && !dice.isBase)
+            {
+                workers.Add(dice);
+            }
+        }
+        return workers;
+    }
+
+    public Dice_Control GetFirstPlayerWorker(Player player)
+    {
+        foreach (Dice_Control dice in player.GetComponentsInChildren<Dice_Control>())
+        {
+            //is dice value odd ie worker
+            if (dice.value % 2 == 1 && !dice.isBase)
+            {
+                return dice;
+            }
+        }
+        return null;
+    }
+
+    public List<Dice_Control> GetAllPlayerSoldiers(Player player)
+    {
+        List<Dice_Control> soldiers = new List<Dice_Control>();
+        foreach (Dice_Control dice in player.GetComponentsInChildren<Dice_Control>())
+        {
+            //is dice value odd ie worker
+            if (dice.value % 2 == 0 && !dice.isBase)
+            {
+                soldiers.Add(dice);
+            }
+        }
+        return soldiers;
+    }
+
+    public Dice_Control GetFirstPlayerSoldier(Player player)
+    {
+        foreach (Dice_Control dice in player.GetComponentsInChildren<Dice_Control>())
+        {
+            //is dice value even ie Soldier
+            if (dice.value % 2 == 0 && !dice.isBase)
+            {
+                return dice;
+            }
+        }
+        return null;
+    }
+
+    public Dice_Control GetFirstPlayerOutpost(Player player)
+    {
+        foreach (Dice_Control dice in player.GetComponentsInChildren<Dice_Control>())
+        {
+            //is dice value even ie Soldier
+            if (dice.isBase)
+            {
+                return dice;
+            }
+        }
+        return null;
+    }
+    //-------------------------------------------------------------------
 
     public int GenerateIncomeForPlayer(List<GameObject> playersDiceOwned)
     {
@@ -106,14 +182,23 @@ public class PlayerControl : MonoBehaviour
         return moveForPlayer;
     }
 
+    public void TakeMovesFromPlayer(Player targetPlayer, int moveValue = 1)
+    {
+        targetPlayer.numberOfMoves -= moveValue;
+        gameControl.ui_Control.UpdateMovesDisplay(targetPlayer.numberOfMoves);
+    }
+
     internal void TakenMove(int moveValue = 1)
     {
         activePlayer.numberOfMoves -= moveValue;
         if (activePlayer.numberOfMoves <= 0)
         {
             gameControl.DisalowInput();
-            gameControl.currentySelected.SetDeselected();
-            gameControl.currentySelected = null;
+            if(gameControl.currentySelected != null)
+            {
+                gameControl.currentySelected.SetDeselected();
+                gameControl.currentySelected = null;
+            }
             NextPlayer();
         }
         else
@@ -185,18 +270,18 @@ public class PlayerControl : MonoBehaviour
             }
         }
 
-        if (activePlayer.ai)
+        if (activePlayer.ai != null)
         {
-            AiPlayersTurn();
+            AiPlayersTurn(activePlayer);
         } else
         {
             gameControl.AllowInput();
         }
     }
 
-    public void AiPlayersTurn()
+    public void AiPlayersTurn(Player player)
     {
-        gameControl.aiControl.EasyAi();
+        gameControl.aiControl.EasyAi(player);
     }
 
     public void EliminatePlayer()
