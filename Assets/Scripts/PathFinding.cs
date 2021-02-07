@@ -28,42 +28,13 @@ public class PathFinding : MonoBehaviour
         depth = d;
     }
 
-    //public Dice_Control GetAdjacentFriendlyOutpost(Dice_Control dice)
-    //{
-    //    //todo figure out a good way to combine GetAdjacent tiles and this one.
-    //    // notes, validPathTile is used for if there is a piece on the tile
-
-    //    boardTiles = gameControl.boardControl.GetBoardTiles();//latest
-    //    Vector2Int nextIndex;
-    //    Dice_Control testDice;
-    //    TileControl tile = dice.tileControl;
-
-    //    foreach (Vector2Int direction in adjacent)
-    //    {
-    //        nextIndex = tile.tileIndex + direction;
-    //        if (nextIndex.x < 0 || nextIndex.y < 0 || nextIndex.x >= width || nextIndex.y >= depth)
-    //        {
-    //            //Debug.Log($"Skipped path tile: {nextIndex} out of bounds");
-    //        }
-    //        else
-    //        {
-    //            testDice = boardTiles[nextIndex.x, nextIndex.y].diceOnTile;
-    //            if (testDice != null && testDice.isBase)
-    //            {
-    //                return testDice;
-    //            }
-    //        }
-    //    }
-    //    return null;
-    //}
-
     public List<TileControl> FindPathToNearestEnemy(TileControl sorceTile, Player currentPlayer)
     {
         List<TileControl> adjacentTiles = new List<TileControl>();
         List<TileControl> adjacentTilesBuffer = new List<TileControl>();
         boardTiles = RefreshBoardTiles(); 
 
-        Debug.Log($"Looking tile near {sorceTile.tileIndex} who isn't player {currentPlayer.name}");
+        Debug.Log($"Looking for enemy near {sorceTile.tileIndex} who isn't player {currentPlayer.name}");
 
         bool enemyFound = false;
         TileControl target = sorceTile;// for value not set compilaiton error
@@ -73,18 +44,15 @@ public class PathFinding : MonoBehaviour
         {
             foreach (TileControl tile in adjacentTiles)
             {
-                if (tile.diceOnTile)//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.>>>>>>>>>>>>> seems not to pick up on there bing a dic on the tile
+                if (tile.diceOnTile && tile.diceOnTile.player.name != currentPlayer.name)                
                 {
-                    //adjacent tile, had dice on it, is it an ememy dice
-                    if (tile.diceOnTile.player.name != currentPlayer.name)
-                    {
-                        enemyFound = true;
-                        //gameControl.playerControl.activePlayer.ai.target = target.diceOnTile;//could be better way
-                        tile.SetPathValue(pathCost);
-                        target = tile;
-                        Debug.Log($"Found enemy {target.diceOnTile.value} {target.diceOnTile.player.name}");
-                        break;//for
-                    }
+                    //adjacent tile, had dice on it, is it an ememy dice                   
+                    enemyFound = true;
+                    //gameControl.playerControl.activePlayer.ai.target = target.diceOnTile;//could be better way
+                    tile.SetPathValue(pathCost);
+                    target = tile;
+                    Debug.Log($"Found enemy {target.diceOnTile.currentValue} {target.diceOnTile.player.name} at {target.tileIndex}");
+                    break;//for
                     //may have but that dosen't add in new adjacent tiles when there is dice in the way
                 }
                 else
@@ -93,6 +61,10 @@ public class PathFinding : MonoBehaviour
                     tile.SetPathValue(pathCost);
                     foreach (TileControl validTile in GetAjacentTiles(tile, GetAdjacentTilesType.AllUnprocessed))
                     {
+                        if(validTile.diceOnTile != null && validTile.diceOnTile.player.playerName == currentPlayer.playerName)
+                        {
+                            //Debug.Log($"skipped own dice tile at {validTile.tileIndex}");
+                        } else 
                         adjacentTilesBuffer.Add(validTile);//for next loop
                         //Debug.Log($"added {validTile.tileIndex} to tile buffer");
                     }
@@ -175,56 +147,9 @@ public class PathFinding : MonoBehaviour
         return null;
     }
 
-    
-
-    //private List<TileControl> GetAjacentTiles(TileControl tile, bool onlyEmptyTiles = true)
-    //{
-    //    Debug.Log($"Getting AjacentTiles to {tile.tileIndex} {onlyEmptyTiles}");
-    //    List<TileControl> adjacentTiles = new List<TileControl>();
-    //    boardTiles = gameControl.boardControl.GetBoardTiles();//latest
-    //    Vector2Int nextIndex;
-    //    TileControl nextTile;
-    //    foreach (Vector2Int direction in adjacent)
-    //    {
-    //        nextIndex = tile.tileIndex + direction;
-    //        Debug.Log($" - {tile.tileIndex}+{direction}={nextIndex}");
-    //        if (nextIndex.x < 0 || nextIndex.y < 0 || nextIndex.x >= width || nextIndex.y >= depth)
-    //        {
-    //            //Debug.Log($"Skipped path tile: {nextIndex} out of bounds");
-    //        }
-    //        else
-    //        {
-    //            nextTile = boardTiles[nextIndex.x, nextIndex.y];
-
-    //            //logic to consider what tiles to add around 'tile'
-    //            // - add only empty tiles, that have not path value, and has not been processed before
-    //            // - add when value is -1 ie not been processed before
-    //            // - add when there is dice on tile, and diceOnTile isBase
-    //            // - skip when outside board if (nextIndex.x < 0 || nextIndex.y < 0 || nextIndex.x >= width || nextIndex.y >= depth)
-
-    //            //NB inValid path tiles are tile that have pices on them
-    //            if (onlyEmptyTiles && (nextTile.validPathfindingTile == false || nextTile.pathValue >= 0)) //todo, will have to update and broadcase valid moves, ie dice on them, is invalid
-    //            {
-    //                //Debug.Log($"Skipped {nextTile.validMove} tile {nextTile.pathValue}: {nextTile.tileIndex}");
-    //            }
-
-
-    //            else if (nextTile.pathValue == -1)// Here TODO
-    //            {
-    //                //Debug.Log($"Not considered for path: {nextTile.tileIndex}");
-    //            }
-    //            else
-    //            {
-    //                adjacentTiles.Add(nextTile);
-    //            }
-    //        }
-    //    }
-    //    return adjacentTiles;
-    //}
-
     public List<TileControl> GetAjacentTiles(TileControl tile, GetAdjacentTilesType type, Player player = null)
     {
-        Debug.Log($"Getting AjacentTiles to {tile.tileIndex} {type}");
+        //Debug.Log($"Getting AjacentTiles to {tile.tileIndex} {type}");
         List<TileControl> adjacentTiles = new List<TileControl>();
         boardTiles = gameControl.boardControl.GetBoardTiles();//latest
         Vector2Int nextIndex;
@@ -233,7 +158,7 @@ public class PathFinding : MonoBehaviour
         foreach (Vector2Int direction in adjacent)
         {
             nextIndex = tile.tileIndex + direction;
-            Debug.Log($" - {tile.tileIndex}+{direction}={nextIndex}");
+            //Debug.Log($" - {tile.tileIndex}+{direction}={nextIndex}");
             if (nextIndex.x < 0 || nextIndex.y < 0 || nextIndex.x >= width || nextIndex.y >= depth)
             {
                 //Debug.Log($"Skipped path tile: {nextIndex} out of bounds");
@@ -282,7 +207,7 @@ public class PathFinding : MonoBehaviour
                         {
                             if (nextTile.isEmptyTile == false && nextTile.diceOnTile.isBase)
                             {
-                                if (nextTile.diceOnTile.player.name == player.name)
+                                if (nextTile.diceOnTile.player.playerName == player.playerName)
                                     adjacentTiles.Add(nextTile);
                             }
                             break;

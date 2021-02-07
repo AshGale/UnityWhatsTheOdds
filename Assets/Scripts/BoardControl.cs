@@ -317,6 +317,7 @@ public class BoardControl : MonoBehaviour
             //Debug.Log($"enter hopping to tile");
             for (int i = 0; i < pathLength; i++)
             {
+                Debug.Log($" > Hopping from {diceToMove.tileControl.tileIndex} too {path[i].tileIndex} ");
                 await HopAnimation(diceToMove, path[i]);
                 await Task.Delay(TimeSpan.FromSeconds(GlobalVariables.data.HOP_DELAY_TIME));
             }
@@ -341,11 +342,12 @@ public class BoardControl : MonoBehaviour
         gameControl.playerControl.TakenMove(path.Count);
     }
 
-    internal void BaseReenforceAdjacent(Dice_Control targetDice)
+    internal async void BaseReenforceAdjacent(Dice_Control targetDice)
     {
-        if (targetDice.value < 6)
+        if (targetDice.currentValue < 6)
         {
-            StartCoroutine(targetDice.ChangeDiceValue(targetDice.value + 1));
+            //StartCoroutine(targetDice.ChangeDiceValue(targetDice.currentValue + 1));
+            await targetDice.AnimateDiceValueChange(targetDice.currentValue + 1);
             gameControl.playerControl.TakenMove();
         }
         else
@@ -364,9 +366,9 @@ public class BoardControl : MonoBehaviour
         }
         else
         {
-            if (targetDice.value > 1)
+            if (targetDice.currentValue > 1)
             {
-                StartCoroutine(targetDice.ChangeDiceValue(targetDice.value - 1));//defending base attack value
+                StartCoroutine(targetDice.ChangeDiceValue(targetDice.currentValue - 1));//defending base attack value
 
             } else
             {
@@ -386,25 +388,25 @@ public class BoardControl : MonoBehaviour
             return; 
         }
 
-        int sum = selectedDice.value + targetDice.value;
+        int sum = selectedDice.currentValue + targetDice.currentValue;
         if (targetDice.isBase)
         {
             if (sum > 6)
             {
-                Debug.Log($"Reenforcing outpost from {targetDice.value} to 6");
+                Debug.Log($"Reenforcing outpost from {targetDice.currentValue} to 6");
                 await HopTo(path, selectedDice);
                 StartCoroutine(targetDice.ChangeDiceValue(6));
                 StartCoroutine(selectedDice.ChangeDiceValue(sum - 6));
             }else if (sum == 6)
             {
-                Debug.Log($"Absorbing unit, from {targetDice.value} to 6");
+                Debug.Log($"Absorbing unit, from {targetDice.currentValue} to 6");
                 await HopTo(path, selectedDice);
                 StartCoroutine(targetDice.ChangeDiceValue(6));
                 DestroySingleDice(selectedDice);
                 UpdateBoardMeta(selectedDice.tileControl, targetDice.tileControl, false);
             }else
             {
-                Debug.Log($"Reenforcing outpost from {targetDice.value} to " + sum);
+                Debug.Log($"Reenforcing outpost from {targetDice.currentValue} to " + sum);
                 await HopTo(path, selectedDice);
                 StartCoroutine(targetDice.ChangeDiceValue(sum));
                 DestroySingleDice(selectedDice);
@@ -432,12 +434,12 @@ public class BoardControl : MonoBehaviour
         }
         else if (sum > 6)
         {
-            if (targetDice.value == 6) { 
+            if (targetDice.currentValue == 6) { 
                 Debug.Log($"Invlaid Move target at maximum");
                 InvalidMove(targetDice.tileControl); 
                 return; 
             }
-            Debug.Log($"Setting target from {targetDice.value} to 6");
+            Debug.Log($"Setting target from {targetDice.currentValue} to 6");
             await HopTo(path, selectedDice);
             StartCoroutine(targetDice.ChangeDiceValue(6));
             StartCoroutine(selectedDice.ChangeDiceValue(sum - 6));
@@ -458,9 +460,9 @@ public class BoardControl : MonoBehaviour
 
     internal async void CalculateAttackEnemy(Dice_Control attackingDice, Dice_Control targetEnemyDice, List<TileControl> path)
     {
-        if (attackingDice.value %2 ==0)
+        if (attackingDice.currentValue %2 ==0)
         {
-            int remainder = targetEnemyDice.value - attackingDice.value; 
+            int remainder = targetEnemyDice.currentValue - attackingDice.currentValue; 
             if (remainder < 0)
             {
                 Debug.Log($"Attacker won {-remainder} remaining");
@@ -490,17 +492,17 @@ public class BoardControl : MonoBehaviour
         }
         else
         {
-            Debug.Log($"Invlaid Move {attackingDice.value} not attacker");
+            Debug.Log($"Invlaid Move {attackingDice.currentValue} not attacker");
             InvalidMove(targetEnemyDice.tileControl);
         }
     }
 
     internal async void CalculateAttackEnemyBase(Dice_Control attackingDice, Dice_Control targetEnemyBaseChild, List<TileControl> path)
     {
-        if (attackingDice.value % 2 == 0)
+        if (attackingDice.currentValue % 2 == 0)
         {
             await HopTo(path, attackingDice, true);
-            int remainder = targetEnemyBaseChild.value - attackingDice.value;
+            int remainder = targetEnemyBaseChild.currentValue - attackingDice.currentValue;
             if (remainder < 0)
             {
                 Debug.Log($"base destoryed and left {6 - -remainder}");
@@ -524,7 +526,7 @@ public class BoardControl : MonoBehaviour
         }
         else
         {
-            Debug.Log($"Invlaid Move {attackingDice.value} not attacker");
+            Debug.Log($"Invlaid Move {attackingDice.currentValue} not attacker");
             InvalidMove(targetEnemyBaseChild.tileControl);
         }
         //each case either has destroy base, that allows input, or is invalid, and set allow input
@@ -560,7 +562,7 @@ public class BoardControl : MonoBehaviour
 
         diceControl.diceColour = player.playerColour;
         diceControl.player = player;
-        diceControl.value = 1;
+        diceControl.currentValue = 1;
         diceControl.tileControl = targetTile;
         targetTile.SetDiceOnTile(diceControl);
         newDice.name = player.name;
@@ -569,7 +571,8 @@ public class BoardControl : MonoBehaviour
         newDice.transform.SetParent(player.transform);
         player.diceOwned.Add(newDice);
 
-        gameControl.AllowInput();
+        if(player.ai == null)
+            gameControl.AllowInput();
 
         return returnDice == true ? diceControl : null;
     }
@@ -631,13 +634,13 @@ public class BoardControl : MonoBehaviour
         {
             startingTile = boardTiles[(int)player.startLocation.x, (int)player.startLocation.z];
             lowerDice = CreateDiceAt(startingTile, player, true);
-            lowerDice.value = 6;
+            lowerDice.currentValue = 6;
             lowerDice.transform.rotation = Quaternion.Euler(GlobalVariables.data.SIDE_SIX.x, GlobalVariables.data.SIDE_SIX.y, GlobalVariables.data.SIDE_SIX.z);
             lowerDice.transform.rotation.Normalize();
             lowerDice.transform.position = player.startLocation;
 
             upperDice = CreateDiceAt(startingTile, player, true);
-            upperDice.value = 6;
+            upperDice.currentValue = 6;
             upperDice.transform.rotation = Quaternion.Euler(GlobalVariables.data.SIDE_SIX.x, GlobalVariables.data.SIDE_SIX.y, GlobalVariables.data.SIDE_SIX.z);
             upperDice.transform.rotation.Normalize();
 

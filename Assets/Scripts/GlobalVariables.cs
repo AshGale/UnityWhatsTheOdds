@@ -97,9 +97,10 @@ public class GlobalVariables : MonoBehaviour
     public float SCROLL_SPEED = .5f;
     public float FLASH_SELECTED_SPEED = .5f;
     public float BASE_SPAWN_DISTANCE = 1.3f;
-    public float DICE_SIZE = 0.5f;
-    public float MOVE_SPEED = 5;
+    public float DICE_SIZE = .5f;
+    public float MOVE_SPEED = .1f;
     public float THRUST_SPEED = 2;
+    public float AI_ACTION_SPEED = .75f;
     public int NUMER_OF_PLAYERS = 2;
     public float BOARD_CLEARANCE = 2.2f;
     public float TILE_CLEARANCE = 1.8f;

@@ -93,7 +93,7 @@ public class PlayerControl : MonoBehaviour
         foreach (Dice_Control dice in player.GetComponentsInChildren<Dice_Control>())
         {
             //is dice value odd ie worker
-            if (dice.value % 2 == 1 && !dice.isBase)
+            if (dice.currentValue % 2 == 1 && !dice.isBase)
             {
                 workers.Add(dice);
             }
@@ -106,7 +106,7 @@ public class PlayerControl : MonoBehaviour
         foreach (Dice_Control dice in player.GetComponentsInChildren<Dice_Control>())
         {
             //is dice value odd ie worker
-            if (dice.value % 2 == 1 && !dice.isBase)
+            if (dice.currentValue % 2 == 1 && !dice.isBase)
             {
                 return dice;
             }
@@ -120,7 +120,7 @@ public class PlayerControl : MonoBehaviour
         foreach (Dice_Control dice in player.GetComponentsInChildren<Dice_Control>())
         {
             //is dice value odd ie worker
-            if (dice.value % 2 == 0 && !dice.isBase)
+            if (dice.currentValue % 2 == 0 && !dice.isBase)
             {
                 soldiers.Add(dice);
             }
@@ -133,7 +133,7 @@ public class PlayerControl : MonoBehaviour
         foreach (Dice_Control dice in player.GetComponentsInChildren<Dice_Control>())
         {
             //is dice value even ie Soldier
-            if (dice.value % 2 == 0 && !dice.isBase)
+            if (dice.currentValue % 2 == 0 && !dice.isBase)
             {
                 return dice;
             }
@@ -164,7 +164,7 @@ public class PlayerControl : MonoBehaviour
         foreach (GameObject dice in playersDiceOwned)
         {
             dice_Control = dice.GetComponent<Dice_Control>();
-            dice_value = dice_Control.value;
+            dice_value = dice_Control.currentValue;
             if (dice_Control.isBase)
             {
                 moveForPlayer += GlobalVariables.data.MOVES_FOR_BASE;
@@ -182,14 +182,15 @@ public class PlayerControl : MonoBehaviour
         return moveForPlayer;
     }
 
-    public void TakeMovesFromPlayer(Player targetPlayer, int moveValue = 1)
-    {
-        targetPlayer.numberOfMoves -= moveValue;
-        gameControl.ui_Control.UpdateMovesDisplay(targetPlayer.numberOfMoves);
-    }
+    //public void TakeMovesFromPlayer(Player targetPlayer, int moveValue = 1)
+    //{
+    //    targetPlayer.numberOfMoves -= moveValue;
+    //    gameControl.ui_Control.UpdateMovesDisplay(targetPlayer.numberOfMoves);
+    //}
 
     internal void TakenMove(int moveValue = 1)
     {
+        Debug.Log($"Taking {moveValue} form {activePlayer.name}, now at {activePlayer.numberOfMoves - moveValue}");
         activePlayer.numberOfMoves -= moveValue;
         if (activePlayer.numberOfMoves <= 0)
         {
@@ -199,11 +200,16 @@ public class PlayerControl : MonoBehaviour
                 gameControl.currentySelected.SetDeselected();
                 gameControl.currentySelected = null;
             }
+            
             NextPlayer();
         }
         else
         {
             gameControl.ui_Control.UpdateMovesDisplay(activePlayer.numberOfMoves);
+            if (activePlayer.ai == null)
+            {
+                gameControl.AllowInput();
+            }
         }
     }
 
@@ -260,7 +266,7 @@ public class PlayerControl : MonoBehaviour
             foreach (GameObject dice in activePlayer.diceOwned)
             {
                 dice_Control = dice.GetComponent<Dice_Control>();
-                dice_value = dice_Control.value;
+                dice_value = dice_Control.currentValue;
                 if (dice_Control.isBase)
                 {
                     Dice_Control childDice = dice_Control.transform.GetChild(6).GetComponent<Dice_Control>();

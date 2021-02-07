@@ -253,7 +253,8 @@ public class GameControl : MonoBehaviour
     public void AllowInput()
     {
         //Debug.Log("allow input");
-        allowInput = true;
+        if(playerControl.activePlayer.ai == null)
+            allowInput = true;
     }
     public void DisalowInput()
     {

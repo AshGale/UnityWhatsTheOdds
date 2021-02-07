@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
-
+using System.Threading.Tasks;
+using System;
 public class Dice_Control : MonoBehaviour
 {
     //meta
@@ -10,7 +11,7 @@ public class Dice_Control : MonoBehaviour
     public Material selectedDiceColour;
     public Player player;
     public TileControl tileControl;
-    public int value;
+    public int currentValue;
     public bool isBase = false;
     public bool lowerDice = true;
     public Dice_Control child = null;
@@ -26,6 +27,11 @@ public class Dice_Control : MonoBehaviour
     {
         diceColour = GetComponent<Renderer>().material = diceColour;
     }
+
+    public void SetDiceValue(int newValue) => this.currentValue = newValue;
+
+    public int GetDiceValue() => this.currentValue;    
+
 
     public void SetSelected()
     {
@@ -146,12 +152,66 @@ public class Dice_Control : MonoBehaviour
         
     }
 
+    //public async Task AnimateDiceValueChange(int newValue)
+
+    public async Task AnimateDiceValueChange(int newValue)
+    {
+        // apply an jump force, based on the current value
+        switch (this.GetDiceValue())
+        {
+            case 1: rb.AddForce(transform.up * GlobalVariables.data.DICE_SIZE, ForceMode.VelocityChange); break;
+            case 2: rb.AddForce(transform.forward * GlobalVariables.data.DICE_SIZE, ForceMode.VelocityChange); break;
+            case 3: rb.AddForce(-transform.right * GlobalVariables.data.DICE_SIZE, ForceMode.VelocityChange); break;
+            case 4: rb.AddForce(-transform.forward * GlobalVariables.data.DICE_SIZE, ForceMode.VelocityChange); break;
+            case 5: rb.AddForce(transform.right * GlobalVariables.data.DICE_SIZE, ForceMode.VelocityChange); break;
+            case 6: rb.AddForce(-transform.up * GlobalVariables.data.DICE_SIZE, ForceMode.VelocityChange); break;
+        }
+
+        // apply a rotational target, based on newValue
+        Vector3 currentRaw = transform.rotation.eulerAngles;
+        Quaternion target = new Quaternion();
+        switch (newValue)
+        {
+            case 1: target = Quaternion.Euler(GlobalVariables.data.SIDE_ONE.x, GlobalVariables.data.SIDE_ONE.y, GlobalVariables.data.SIDE_ONE.z); break;
+            case 2: target = Quaternion.Euler(GlobalVariables.data.SIDE_TWO.x, GlobalVariables.data.SIDE_TWO.y, GlobalVariables.data.SIDE_TWO.z); break;
+            case 3: target = Quaternion.Euler(GlobalVariables.data.SIDE_THREE.x, GlobalVariables.data.SIDE_THREE.y, GlobalVariables.data.SIDE_THREE.z); break;
+            case 4: target = Quaternion.Euler(GlobalVariables.data.SIDE_FOUR.x, GlobalVariables.data.SIDE_FOUR.y, GlobalVariables.data.SIDE_FOUR.z); break;
+            case 5: target = Quaternion.Euler(GlobalVariables.data.SIDE_FIVE.x, GlobalVariables.data.SIDE_FIVE.y, GlobalVariables.data.SIDE_FIVE.z); break;
+            case 6: target = Quaternion.Euler(GlobalVariables.data.SIDE_SIX.x, GlobalVariables.data.SIDE_SIX.y, GlobalVariables.data.SIDE_SIX.z); break;
+        }
+
+        //while loop ends before the if can take effect -> 
+        while (currentRaw != target.eulerAngles)
+        {
+            //works great, except there is at .1 error so need to snap, or have range
+            if (currentRaw != target.eulerAngles)
+            {
+                transform.Translate(GetX() * Time.deltaTime, 0f, GetZ() * Time.deltaTime);
+                currentRaw = Quaternion.RotateTowards(transform.rotation, target, 10f).eulerAngles;
+                transform.eulerAngles = currentRaw;
+                //print("current Rotation: " + transform.eulerAngles + " -> " + target.eulerAngles + " : " + value + " to " + newValue);
+                await Task.Delay(TimeSpan.FromMilliseconds(GlobalVariables.data.MOVE_SPEED));
+                //await Task.Yield();
+                //Task.Delay(TimeSpan.FromSeconds(1 * Time.deltaTime));
+
+                //await Task.Delay(TimeSpan.FromSeconds(1));
+
+            }
+        }
+        transform.rotation.Normalize();
+        //await Task.Delay(TimeSpan.FromSeconds(GlobalVariables.data.MOVE_SPEED));
+        //Task.Delay(TimeSpan.FromSeconds(1));
+        currentValue = newValue;
+        //GameObject.Find("Game Control").GetComponent<GameControl>().AllowInput();
+    }
+
+
     //todo update to be an Await
     public IEnumerator ChangeDiceValue(int newValue)
     {
         //workaround as kept randommly stopping at a rotaiton -> need animation
         float speed = 1f;
-        switch (value)
+        switch (currentValue)
         {
             case 1: rb.AddForce(transform.up * speed, ForceMode.VelocityChange); break;
             case 2: rb.AddForce(transform.forward * speed, ForceMode.VelocityChange); break;
@@ -206,7 +266,7 @@ public class Dice_Control : MonoBehaviour
         //rb.useGravity = true;
         yield return new WaitForSeconds(Time.deltaTime);
         //print("Done Rotating: " + transform.eulerAngles + " -> " + target.eulerAngles + " : " + value + " to " + newValue);
-        value = newValue;
+        currentValue = newValue;
         GameObject.Find("Game Control").GetComponent<GameControl>().AllowInput();
     }
 
