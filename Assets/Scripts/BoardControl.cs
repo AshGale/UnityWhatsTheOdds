@@ -346,7 +346,6 @@ public class BoardControl : MonoBehaviour
     {
         if (targetDice.currentValue < 6)
         {
-            //StartCoroutine(targetDice.ChangeDiceValue(targetDice.currentValue + 1));
             await targetDice.AnimateDiceValueChange(targetDice.currentValue + 1);
             gameControl.playerControl.TakenMove();
         }
@@ -357,7 +356,7 @@ public class BoardControl : MonoBehaviour
         }
     }
 
-    internal void CalculateBasesAttackEnemy(Dice_Control OwenDice, Dice_Control targetDice)
+    internal async void CalculateBasesAttackEnemy(Dice_Control OwenDice, Dice_Control targetDice)
     {
         if(targetDice.isBase)
         {
@@ -368,7 +367,7 @@ public class BoardControl : MonoBehaviour
         {
             if (targetDice.currentValue > 1)
             {
-                StartCoroutine(targetDice.ChangeDiceValue(targetDice.currentValue - 1));//defending base attack value
+                await targetDice.AnimateDiceValueChange(targetDice.currentValue - 1);//defending base attack value
 
             } else
             {
@@ -395,20 +394,20 @@ public class BoardControl : MonoBehaviour
             {
                 Debug.Log($"Reenforcing outpost from {targetDice.currentValue} to 6");
                 await HopTo(path, selectedDice);
-                StartCoroutine(targetDice.ChangeDiceValue(6));
-                StartCoroutine(selectedDice.ChangeDiceValue(sum - 6));
+                await targetDice.AnimateDiceValueChange(6);
+                await targetDice.AnimateDiceValueChange(sum - 6);
             }else if (sum == 6)
             {
                 Debug.Log($"Absorbing unit, from {targetDice.currentValue} to 6");
                 await HopTo(path, selectedDice);
-                StartCoroutine(targetDice.ChangeDiceValue(6));
+                await targetDice.AnimateDiceValueChange(6);
                 DestroySingleDice(selectedDice);
                 UpdateBoardMeta(selectedDice.tileControl, targetDice.tileControl, false);
             }else
             {
                 Debug.Log($"Reenforcing outpost from {targetDice.currentValue} to " + sum);
                 await HopTo(path, selectedDice);
-                StartCoroutine(targetDice.ChangeDiceValue(sum));
+                await targetDice.AnimateDiceValueChange(sum);
                 DestroySingleDice(selectedDice);
                 UpdateBoardMeta(selectedDice.tileControl, targetDice.tileControl, false);
             }
@@ -441,13 +440,13 @@ public class BoardControl : MonoBehaviour
             }
             Debug.Log($"Setting target from {targetDice.currentValue} to 6");
             await HopTo(path, selectedDice);
-            StartCoroutine(targetDice.ChangeDiceValue(6));
-            StartCoroutine(selectedDice.ChangeDiceValue(sum - 6));
+            await targetDice.AnimateDiceValueChange(6);
+            await targetDice.AnimateDiceValueChange(sum - 6);
         } else if (sum <= 6)
         {
             await HopTo(path, selectedDice);
             Debug.Log($"Combining dice, {sum}");
-            StartCoroutine(targetDice.ChangeDiceValue(sum));
+            await targetDice.AnimateDiceValueChange(sum);
             DestroySingleDice(selectedDice);
             UpdateBoardMeta(selectedDice.tileControl, targetDice.tileControl, false);
         }
@@ -469,7 +468,8 @@ public class BoardControl : MonoBehaviour
                 await HopTo(path, attackingDice, true);
                 
                 DestroySingleDice(targetEnemyDice);
-                StartCoroutine(attackingDice.ChangeDiceValue(-remainder));
+                await attackingDice.AnimateDiceValueChange(-remainder);
+
                 MoveToEmptyTile(new List<TileControl> { path.Last() }, attackingDice);
             } else if (remainder == 0)
             {
@@ -484,7 +484,8 @@ public class BoardControl : MonoBehaviour
                 Debug.Log($"Defender now at {remainder}");
                 await HopTo(path, attackingDice, true);
 
-                StartCoroutine(targetEnemyDice.ChangeDiceValue(remainder));
+                await targetEnemyDice.AnimateDiceValueChange(remainder);
+
                 DestroySingleDice(attackingDice);
             }
             gameControl.playerControl.TakenMove(path.Count);
@@ -518,7 +519,7 @@ public class BoardControl : MonoBehaviour
             else
             {
                 Debug.Log($"base now at {remainder}");
-                StartCoroutine(targetEnemyBaseChild.ChangeDiceValue(remainder));
+                await targetEnemyBaseChild.AnimateDiceValueChange(remainder);
                 DestroySingleDice(attackingDice);
             }
             gameControl.playerControl.TakenMove(path.Count);
@@ -532,7 +533,7 @@ public class BoardControl : MonoBehaviour
         //each case either has destroy base, that allows input, or is invalid, and set allow input
     }
 
-    internal void DeconstrucetBase(Dice_Control childDice, int remainingValue)
+    internal async void DeconstrucetBase(Dice_Control childDice, int remainingValue)
     {
         //Debug.Log($"destroying {childDice.gameObject.GetInstanceID()}");
         GameObject parentObject = childDice.gameObject.transform.parent.gameObject;
@@ -542,7 +543,7 @@ public class BoardControl : MonoBehaviour
         parentDice.isBase = false;
         parentDice.child = null;
         //Debug.Log($"setting {parentDice.gameObject.GetInstanceID()} to {remainingValue}");
-        StartCoroutine(parentDice.ChangeDiceValue(remainingValue));
+        await parentDice.AnimateDiceValueChange(remainingValue);
     }
 
     public void DestroySingleDice(Dice_Control diceToDestroy, bool removeTileDice = true)
@@ -661,7 +662,7 @@ public class BoardControl : MonoBehaviour
             {
                 tile = Instantiate(Tile, new Vector3(x, tileSize, z), Quaternion.identity);
                 tileScript = tile.GetComponent<TileControl>();
-                tileScript.tileIndex = new Vector2Int( (int)x, (int)z );              
+                tileScript.tileIndex = new Vector2Int( (int)x, (int)z );
                 tileScript.tileColour = WhiteTile == true ? WhiteMaterial : BlackMaterial;
                 tileScript.SetIsEmptyTile();
                 tileScript.SetValidPathfing();

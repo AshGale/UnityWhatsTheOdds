@@ -191,16 +191,9 @@ public class Dice_Control : MonoBehaviour
                 transform.eulerAngles = currentRaw;
                 //print("current Rotation: " + transform.eulerAngles + " -> " + target.eulerAngles + " : " + value + " to " + newValue);
                 await Task.Delay(TimeSpan.FromMilliseconds(GlobalVariables.data.MOVE_SPEED));
-                //await Task.Yield();
-                //Task.Delay(TimeSpan.FromSeconds(1 * Time.deltaTime));
-
-                //await Task.Delay(TimeSpan.FromSeconds(1));
-
             }
         }
         transform.rotation.Normalize();
-        //await Task.Delay(TimeSpan.FromSeconds(GlobalVariables.data.MOVE_SPEED));
-        //Task.Delay(TimeSpan.FromSeconds(1));
         currentValue = newValue;
         //GameObject.Find("Game Control").GetComponent<GameControl>().AllowInput();
     }

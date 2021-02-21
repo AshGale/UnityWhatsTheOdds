@@ -948,7 +948,7 @@ MonoBehaviour:
   selectedDiceColour: {fileID: 2100000, guid: 5e232a962d90f0b4c8943bda81abe673, type: 2}
   player: {fileID: 0}
   tileControl: {fileID: 0}
-  value: 0
+  currentValue: 0
   isBase: 0
   lowerDice: 1
   child: {fileID: 0}

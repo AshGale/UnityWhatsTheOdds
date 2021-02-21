@@ -60,7 +60,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 84611138fd59b1148b77a886c4810dba, type: 2}
+  - {fileID: 2100000, guid: 82e1aff4114bc394c815839111da82de, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -106,10 +106,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dd7cbe6d6dc4564296516ece1cf38c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  x: 0
-  z: 0
-  empty: 1
-  validMove: 1
-  dice: {fileID: 0}
-  tileColour: {fileID: 2100000, guid: 84611138fd59b1148b77a886c4810dba, type: 2}
-  selectedTileColour: {fileID: 2100000, guid: 885fa916c97d3bc41aec94f57d95a1a3, type: 2}
+  validPathfindingTile: 1
+  isEmptyTile: 1
+  diceOnTile: {fileID: 0}
+  tileColour: {fileID: 0}
+  tileIndex: {x: 0, y: 0}
+  pathValue: -1

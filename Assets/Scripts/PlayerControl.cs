@@ -56,9 +56,8 @@ public class PlayerControl : MonoBehaviour
             //for testing
             player.GetComponent<Player>().ai = gameControl.aiControl;
 
-
-
             players.Add(player.GetComponent<Player>());
+
         }
         if (newGameScreen.included3.activeSelf)
         {
@@ -68,6 +67,10 @@ public class PlayerControl : MonoBehaviour
                 GlobalVariables.data.PLAYER_3_START,
                 GetPlayerColour(GlobalVariables.data.PLAYER3_COLOUR),
                 GlobalVariables.data.PLAYER_3_CAMERA_DEFAULT);
+
+            //for testing
+            player.GetComponent<Player>().ai = gameControl.aiControl;
+
             players.Add(player.GetComponent<Player>());
         }
         if (newGameScreen.included4.activeSelf)
@@ -78,6 +81,11 @@ public class PlayerControl : MonoBehaviour
                 GlobalVariables.data.PLAYER_4_START,
                 GetPlayerColour(GlobalVariables.data.PLAYER4_COLOUR),
                 GlobalVariables.data.PLAYER_4_CAMERA_DEFAULT);
+
+            //for testing
+            player.GetComponent<Player>().ai = gameControl.aiControl;
+
+
             players.Add(player.GetComponent<Player>());
         }
         indexOfCurrentPlayer = 0;
@@ -261,7 +269,7 @@ public class PlayerControl : MonoBehaviour
         gameControl.ui_Control.UpdateMovesDisplay(activePlayer.numberOfMoves);
         StartCoroutine(gameControl.cameraConrol.GlidePosition(activePlayer.cameraPosition));
 
-        if (GlobalVariables.data.SHOW_FLASH_START_TURN)
+        if (GlobalVariables.data.SHOW_FLASH_START_TURN && activePlayer.ai == null)
         {
             foreach (GameObject dice in activePlayer.diceOwned)
             {
