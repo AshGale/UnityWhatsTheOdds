@@ -16,6 +16,7 @@ public class Ui_Control : MonoBehaviour
     public Material SelectedMaterial;
     public Material DefaultMaterial;
     public TextMeshProUGUI playerActionsText;
+    public TextMeshProUGUI playerIncomeText;
     public TextMeshProUGUI teamNameText;
 
     public GameObject mainMenu;
@@ -29,6 +30,7 @@ public class Ui_Control : MonoBehaviour
     void Start()
     {
         playerActionsText.text = GlobalVariables.data.UI_ACTIONS_TEXT + "0";
+        playerIncomeText.text = GlobalVariables.data.UI_INCOME_TEXT + "0"; 
         teamNameText.text = GlobalVariables.data.UI_TURN_TEXT + "";
         SetActiveScreens(ActiveSreen.MainMenu);
     }
@@ -100,9 +102,10 @@ public class Ui_Control : MonoBehaviour
 
     //----------------------------------------------------New Game Menu End--------------------------------------------------------------
     //----------------------------------------------------Game Banner Start--------------------------------------------------------------
-    public void UpdateMovesDisplay(int moves)
+    public void UpdateMovesDisplay(int moves, int income)
     {
-        playerActionsText.text = GlobalVariables.data.UI_ACTIONS_TEXT + moves;
+        playerActionsText.text = $"{GlobalVariables.data.UI_ACTIONS_TEXT} {moves}";
+        playerIncomeText.text = $"{GlobalVariables.data.UI_INCOME_TEXT} +{income}";
     }
 
     public void UpdatePlayersTurnDisplay(string playerName, Material playerMaterial)

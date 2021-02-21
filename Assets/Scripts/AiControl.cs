@@ -3,6 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
 
+public enum AiDifficulty
+{
+    Easy, Medium, Hard
+}
+
+public enum AiState
+{
+    Growth, Attack, Defend,  Outpost
+}
+
 public class AiControl : MonoBehaviour
 {
 
@@ -12,7 +22,25 @@ public class AiControl : MonoBehaviour
     public Dice_Control target;
     public Dice_Control leiginToUse;
 
-    public async Task EasyAi(Player player)
+    public AiDifficulty difficulty = AiDifficulty.Easy;
+
+
+    public async void DoTurn(Player player)
+    {
+        switch (player.ai.difficulty)
+        {
+            case AiDifficulty.Easy: await EasyAi(player); break;
+            case AiDifficulty.Medium: await MediumAi(player); break;
+            case AiDifficulty.Hard: await EasyAi(player); break;
+        }
+    }
+
+    private async Task MediumAi(Player player)
+    {
+
+    }
+
+    private async Task EasyAi(Player player)
     {
         Debug.Log($"In easy AI with {player.numberOfMoves}");
         //this.player = player;//gameControl.playerControl.activePlayer;

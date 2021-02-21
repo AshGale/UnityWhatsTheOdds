@@ -395,7 +395,7 @@ public class BoardControl : MonoBehaviour
                 Debug.Log($"Reenforcing outpost from {targetDice.currentValue} to 6");
                 await HopTo(path, selectedDice);
                 await targetDice.AnimateDiceValueChange(6);
-                await targetDice.AnimateDiceValueChange(sum - 6);
+                await selectedDice.AnimateDiceValueChange(sum - 6);
             }else if (sum == 6)
             {
                 Debug.Log($"Absorbing unit, from {targetDice.currentValue} to 6");
@@ -441,7 +441,7 @@ public class BoardControl : MonoBehaviour
             Debug.Log($"Setting target from {targetDice.currentValue} to 6");
             await HopTo(path, selectedDice);
             await targetDice.AnimateDiceValueChange(6);
-            await targetDice.AnimateDiceValueChange(sum - 6);
+            await selectedDice.AnimateDiceValueChange(sum - 6);
         } else if (sum <= 6)
         {
             await HopTo(path, selectedDice);

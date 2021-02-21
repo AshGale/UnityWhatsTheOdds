@@ -213,7 +213,7 @@ public class PlayerControl : MonoBehaviour
         }
         else
         {
-            gameControl.ui_Control.UpdateMovesDisplay(activePlayer.numberOfMoves);
+            gameControl.ui_Control.UpdateMovesDisplay(activePlayer.numberOfMoves, GenerateIncomeForPlayer(activePlayer.diceOwned));
             if (activePlayer.ai == null)
             {
                 gameControl.AllowInput();
@@ -257,16 +257,16 @@ public class PlayerControl : MonoBehaviour
         {
             Debug.Log($"it is now {activePlayer.name}'s turn, with {actionsForPlayer} actions");
             activePlayer.numberOfMoves = actionsForPlayer;
-            StartPlayerTurn();
+            StartPlayerTurn(actionsForPlayer);
         }
     }
 
-    public void StartPlayerTurn()
+    public void StartPlayerTurn(int actionsForPlayer)
     {
         int dice_value;
         Dice_Control dice_Control;
         gameControl.ui_Control.UpdatePlayersTurnDisplay(activePlayer.playerName, activePlayer.playerColour);
-        gameControl.ui_Control.UpdateMovesDisplay(activePlayer.numberOfMoves);
+        gameControl.ui_Control.UpdateMovesDisplay(activePlayer.numberOfMoves, actionsForPlayer);
         StartCoroutine(gameControl.cameraConrol.GlidePosition(activePlayer.cameraPosition));
 
         if (GlobalVariables.data.SHOW_FLASH_START_TURN && activePlayer.ai == null)
@@ -295,7 +295,7 @@ public class PlayerControl : MonoBehaviour
 
     public void AiPlayersTurn(Player player)
     {
-        gameControl.aiControl.EasyAi(player);
+        gameControl.aiControl.DoTurn(player);
     }
 
     public void EliminatePlayer()
