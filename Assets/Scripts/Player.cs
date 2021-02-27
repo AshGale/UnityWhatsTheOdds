@@ -13,6 +13,10 @@ public class Player : MonoBehaviour
     public Vector3 cameraPosition;
     public int numberOfMoves;
     public AiControl ai;
+    public int income;//used for ai
+
+    //TODO add in seperate lists for Outposts, Workers, and Soldiers. will make ai much more performent, at the cost of genearl performace
+    // OR add in int to represent ammount of the same, eg 1 outpost, 2 workers, 1 soldier
 
     public void Init(string playerName, Vector3 startLocation, Material playerColour, Vector3 cameraPosition)
     {

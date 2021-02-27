@@ -54,6 +54,7 @@ public class PlayerControl : MonoBehaviour
                 GlobalVariables.data.PLAYER_2_CAMERA_DEFAULT);
 
             //for testing
+            gameControl.aiControl.difficulty = AiDifficulty.Medium;
             player.GetComponent<Player>().ai = gameControl.aiControl;
 
             players.Add(player.GetComponent<Player>());
@@ -69,6 +70,7 @@ public class PlayerControl : MonoBehaviour
                 GlobalVariables.data.PLAYER_3_CAMERA_DEFAULT);
 
             //for testing
+            gameControl.aiControl.difficulty = AiDifficulty.Medium;
             player.GetComponent<Player>().ai = gameControl.aiControl;
 
             players.Add(player.GetComponent<Player>());
@@ -83,6 +85,7 @@ public class PlayerControl : MonoBehaviour
                 GlobalVariables.data.PLAYER_4_CAMERA_DEFAULT);
 
             //for testing
+            gameControl.aiControl.difficulty = AiDifficulty.Medium;
             player.GetComponent<Player>().ai = gameControl.aiControl;
 
 
@@ -122,31 +125,21 @@ public class PlayerControl : MonoBehaviour
         return null;
     }
 
-    public List<Dice_Control> GetAllPlayerSoldiers(Player player)
+    public List<Dice_Control> GetAllPlayerOutpost(Player player)
     {
-        List<Dice_Control> soldiers = new List<Dice_Control>();
-        foreach (Dice_Control dice in player.GetComponentsInChildren<Dice_Control>())
-        {
-            //is dice value odd ie worker
-            if (dice.currentValue % 2 == 0 && !dice.isBase)
-            {
-                soldiers.Add(dice);
-            }
-        }
-        return soldiers;
-    }
+        List<Dice_Control> outposts = new List<Dice_Control>();
 
-    public Dice_Control GetFirstPlayerSoldier(Player player)
-    {
+        //todo fix, it seem to add two outposts when there is actually only 1
+
         foreach (Dice_Control dice in player.GetComponentsInChildren<Dice_Control>())
         {
             //is dice value even ie Soldier
-            if (dice.currentValue % 2 == 0 && !dice.isBase)
+            if (dice.isBase && dice.lowerDice == false)
             {
-                return dice;
+                outposts.Add(dice);
             }
         }
-        return null;
+        return outposts;
     }
 
     public Dice_Control GetFirstPlayerOutpost(Player player)
@@ -161,6 +154,32 @@ public class PlayerControl : MonoBehaviour
         }
         return null;
     }
+
+    public List<Dice_Control> GetAllPlayerSoldiers(Player player)
+    {
+        return GetSoldiersFromList(player.GetComponentsInChildren<Dice_Control>());
+    }
+
+    public Dice_Control GetFirstPlayerSoldier(Player player)
+    {
+        List<Dice_Control> soldiers = GetSoldiersFromList(player.GetComponentsInChildren<Dice_Control>());
+        return soldiers.Count <= 0 ? null : soldiers[0];
+    }
+
+    public List<Dice_Control> GetSoldiersFromList(Dice_Control[] dice_Controls)
+    {
+        List<Dice_Control> soldiers = new List<Dice_Control>();
+        foreach (Dice_Control dice in dice_Controls)
+        {
+            //is dice value odd ie worker
+            if (dice.currentValue % 2 == 0 && !dice.isBase)
+            {
+                soldiers.Add(dice);
+            }
+        }
+        return soldiers;
+    }
+
     //-------------------------------------------------------------------
 
     public int GenerateIncomeForPlayer(List<GameObject> playersDiceOwned)
@@ -198,7 +217,8 @@ public class PlayerControl : MonoBehaviour
 
     internal void TakenMove(int moveValue = 1)
     {
-        Debug.Log($"Taking {moveValue} form {activePlayer.name}, now at {activePlayer.numberOfMoves - moveValue}");
+        activePlayer.income = GenerateIncomeForPlayer(activePlayer.diceOwned);
+        Debug.Log($"Taking {moveValue} form {activePlayer.name}, now at {activePlayer.numberOfMoves - moveValue}, with +{activePlayer.income}");
         activePlayer.numberOfMoves -= moveValue;
         if (activePlayer.numberOfMoves <= 0)
         {
@@ -213,7 +233,8 @@ public class PlayerControl : MonoBehaviour
         }
         else
         {
-            gameControl.ui_Control.UpdateMovesDisplay(activePlayer.numberOfMoves, GenerateIncomeForPlayer(activePlayer.diceOwned));
+            
+            gameControl.ui_Control.UpdateMovesDisplay(activePlayer.numberOfMoves, activePlayer.income);
             if (activePlayer.ai == null)
             {
                 gameControl.AllowInput();
@@ -257,6 +278,7 @@ public class PlayerControl : MonoBehaviour
         {
             Debug.Log($"it is now {activePlayer.name}'s turn, with {actionsForPlayer} actions");
             activePlayer.numberOfMoves = actionsForPlayer;
+            activePlayer.income = actionsForPlayer;
             StartPlayerTurn(actionsForPlayer);
         }
     }

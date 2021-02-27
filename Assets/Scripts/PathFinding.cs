@@ -5,7 +5,7 @@ using System;
 
 public enum GetAdjacentTilesType
 {
-    All, AllEmpty, AllUnprocessed, AllProcessed, AllEmptyAndUnprocessed, AllFriendlyOutposts
+    All, AllEmpty, AllUnprocessed, AllProcessed, AllEmptyAndUnprocessed, AllFriendlyOutposts, AllDice, AllFriendlyDice, AllFriendlySoldierDice, AllFriendlyWorkersDice, AllEnemyDice
 }
 
 public class PathFinding : MonoBehaviour
@@ -208,6 +208,50 @@ public class PathFinding : MonoBehaviour
                             if (nextTile.isEmptyTile == false && nextTile.diceOnTile.isBase)
                             {
                                 if (nextTile.diceOnTile.player.playerName == player.playerName)
+                                    adjacentTiles.Add(nextTile);
+                            }
+                            break;
+                        }
+                    case GetAdjacentTilesType.AllDice:
+                        {
+                            if (nextTile.isEmptyTile == false && !nextTile.diceOnTile.isBase)
+                            {
+                                    adjacentTiles.Add(nextTile);
+                            }
+                            break;
+                        }
+                    case GetAdjacentTilesType.AllFriendlyDice:
+                        {
+                            if (nextTile.isEmptyTile == false && !nextTile.diceOnTile.isBase)
+                            {
+                                if (nextTile.diceOnTile.player.playerName == player.playerName)
+                                    adjacentTiles.Add(nextTile);
+                            }
+                            break;
+                        }
+                    case GetAdjacentTilesType.AllFriendlySoldierDice:
+                        {
+                            if (nextTile.isEmptyTile == false && !nextTile.diceOnTile.isBase)
+                            {
+                                if (nextTile.diceOnTile.player.playerName == player.playerName && nextTile.diceOnTile.GetDiceValue() %2 == 0)
+                                    adjacentTiles.Add(nextTile);
+                            }
+                            break;
+                        }
+                    case GetAdjacentTilesType.AllFriendlyWorkersDice:
+                        {
+                            if (nextTile.isEmptyTile == false && !nextTile.diceOnTile.isBase)
+                            {
+                                if (nextTile.diceOnTile.player.playerName == player.playerName && nextTile.diceOnTile.GetDiceValue() % 2 != 0)
+                                    adjacentTiles.Add(nextTile);
+                            }
+                            break;
+                        }
+                    case GetAdjacentTilesType.AllEnemyDice:
+                        {
+                            if (nextTile.isEmptyTile == false && !nextTile.diceOnTile.isBase)
+                            {
+                                if (nextTile.diceOnTile.player.playerName != player.playerName)
                                     adjacentTiles.Add(nextTile);
                             }
                             break;

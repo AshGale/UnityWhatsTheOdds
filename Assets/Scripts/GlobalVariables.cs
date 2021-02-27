@@ -101,13 +101,20 @@ public class GlobalVariables : MonoBehaviour
     public float DICE_SIZE = .5f;
     public float MOVE_SPEED = .1f;
     public float THRUST_SPEED = 2;
-    public float AI_ACTION_SPEED = .75f;
-    public int NUMER_OF_PLAYERS = 2;
+    public int NUMER_OF_PLAYERS = 2;// dependant on default newgame screen
     public float BOARD_CLEARANCE = 2.2f;
     public float TILE_CLEARANCE = 1.8f;
     public float HOP_DELAY_TIME = .2f;
     public float CURRENT_ZOOM = 2.5f;
     public float MAX_ZOOM = 2.5f;
+
+    public float AI_ACTION_SPEED = .75f;
+    public int EASY_AI_INCOME_THRESHOLD = 3;
+    public int MEDIUM_AI_INCOME_THRESHOLD = 6;
+    public int MEDIUM_AI_WORKER_VALUE_THRESHOLD = 3;
+
+    public int HARD_AI_INCOME_THRESHOLD = 9;
+    public int HARD_AI_WORKER_VALUE_THRESHOLD = 5;
 
     void Awake()
     {
