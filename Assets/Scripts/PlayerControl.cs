@@ -54,7 +54,7 @@ public class PlayerControl : MonoBehaviour
                 GlobalVariables.data.PLAYER_2_CAMERA_DEFAULT);
 
             //for testing
-            gameControl.aiControl.difficulty = AiDifficulty.Medium;
+            gameControl.aiControl.SetDifficulty(AiDifficulty.Medium);
             player.GetComponent<Player>().ai = gameControl.aiControl;
 
             players.Add(player.GetComponent<Player>());
@@ -70,7 +70,7 @@ public class PlayerControl : MonoBehaviour
                 GlobalVariables.data.PLAYER_3_CAMERA_DEFAULT);
 
             //for testing
-            gameControl.aiControl.difficulty = AiDifficulty.Medium;
+            gameControl.aiControl.SetDifficulty(AiDifficulty.Medium);
             player.GetComponent<Player>().ai = gameControl.aiControl;
 
             players.Add(player.GetComponent<Player>());
@@ -85,7 +85,7 @@ public class PlayerControl : MonoBehaviour
                 GlobalVariables.data.PLAYER_4_CAMERA_DEFAULT);
 
             //for testing
-            gameControl.aiControl.difficulty = AiDifficulty.Medium;
+            gameControl.aiControl.SetDifficulty(AiDifficulty.Medium);
             player.GetComponent<Player>().ai = gameControl.aiControl;
 
 
@@ -100,8 +100,19 @@ public class PlayerControl : MonoBehaviour
     //-------------------------------------------------------------------Helper functions for ai
     public List<Dice_Control> GetAllPlayerWorkers(Player player)
     {
+        return GetWorkersFromList(player.GetComponentsInChildren<Dice_Control>());
+    }
+
+    public Dice_Control GetFirstPlayerWorker(Player player)
+    {
+        List<Dice_Control> workers = GetWorkersFromList(player.GetComponentsInChildren<Dice_Control>());
+        return workers.Count <= 0 ? null : workers[0]; 
+    }
+
+    public List<Dice_Control> GetWorkersFromList(Dice_Control[] dice_Controls)
+    {
         List<Dice_Control> workers = new List<Dice_Control>();
-        foreach (Dice_Control dice in player.GetComponentsInChildren<Dice_Control>())
+        foreach (Dice_Control dice in dice_Controls)
         {
             //is dice value odd ie worker
             if (dice.currentValue % 2 == 1 && !dice.isBase)
@@ -112,47 +123,29 @@ public class PlayerControl : MonoBehaviour
         return workers;
     }
 
-    public Dice_Control GetFirstPlayerWorker(Player player)
-    {
-        foreach (Dice_Control dice in player.GetComponentsInChildren<Dice_Control>())
-        {
-            //is dice value odd ie worker
-            if (dice.currentValue % 2 == 1 && !dice.isBase)
-            {
-                return dice;
-            }
-        }
-        return null;
-    }
-
     public List<Dice_Control> GetAllPlayerOutpost(Player player)
     {
+        return GetOutpostsFromList(player.GetComponentsInChildren<Dice_Control>());
+    }
+
+    public Dice_Control GetFirstPlayerOutpost(Player player)
+    {
+        List<Dice_Control> outposts = GetOutpostsFromList(player.GetComponentsInChildren<Dice_Control>());
+        return outposts.Count <= 0 ? null : outposts[0];
+    }
+
+    public List<Dice_Control> GetOutpostsFromList(Dice_Control[] dice_Controls)
+    {
         List<Dice_Control> outposts = new List<Dice_Control>();
-
-        //todo fix, it seem to add two outposts when there is actually only 1
-
-        foreach (Dice_Control dice in player.GetComponentsInChildren<Dice_Control>())
+        foreach (Dice_Control dice in dice_Controls)
         {
-            //is dice value even ie Soldier
+            //is dice value odd ie worker
             if (dice.isBase && dice.lowerDice == false)
             {
                 outposts.Add(dice);
             }
         }
         return outposts;
-    }
-
-    public Dice_Control GetFirstPlayerOutpost(Player player)
-    {
-        foreach (Dice_Control dice in player.GetComponentsInChildren<Dice_Control>())
-        {
-            //is dice value even ie Soldier
-            if (dice.isBase)
-            {
-                return dice;
-            }
-        }
-        return null;
     }
 
     public List<Dice_Control> GetAllPlayerSoldiers(Player player)
@@ -208,12 +201,6 @@ public class PlayerControl : MonoBehaviour
         }
         return moveForPlayer;
     }
-
-    //public void TakeMovesFromPlayer(Player targetPlayer, int moveValue = 1)
-    //{
-    //    targetPlayer.numberOfMoves -= moveValue;
-    //    gameControl.ui_Control.UpdateMovesDisplay(targetPlayer.numberOfMoves);
-    //}
 
     internal void TakenMove(int moveValue = 1)
     {

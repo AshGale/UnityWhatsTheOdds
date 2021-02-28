@@ -28,7 +28,7 @@ public class GameControl : MonoBehaviour
         //then have link to load camera zoom when loading.
         //additional, have camera position for each player NB have reset to default button in settings
         mainCamera.transform.position = new Vector3(3, 7, 0);//game start locaion
-        mainCamera.transform.rotation = Quaternion.Euler(65f, 355f, 0f);//game start locaion
+        mainCamera.transform.rotation = Quaternion.Euler(65f, 355f, 0f);//game start locaion//slightly ofset for first player
         mainCamera.transform.rotation.Normalize();
 
         //reset game components
@@ -46,7 +46,7 @@ public class GameControl : MonoBehaviour
         //yield return new WaitForSeconds(.5f);//allow for setup to finish
         playerControl.AddPlayers();
         boardControl.SetupPlayerPieces(playerControl.players);
-        playerControl.PrepairePlayerForTurn();
+        playerControl.PrepairePlayerForTurn();//todo replace with balanced first round function, ie player 1 less moves at start ect
         //ui_Control.SetGameBannerVisable(true);
         AllowInput();
         yield return null;

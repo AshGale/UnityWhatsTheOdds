@@ -110,11 +110,16 @@ public class GlobalVariables : MonoBehaviour
 
     public float AI_ACTION_SPEED = .75f;
     public int EASY_AI_INCOME_THRESHOLD = 3;
+    public int EASY_AI_WORKER_VALUE_THRESHOLD = 1;
+    public int EASY_AI_SOLDIER_VALUE_THRESHOLD = 2;
+
     public int MEDIUM_AI_INCOME_THRESHOLD = 6;
     public int MEDIUM_AI_WORKER_VALUE_THRESHOLD = 3;
+    public int MEDIUM_AI_SOLDIER_VALUE_THRESHOLD = 4;
 
     public int HARD_AI_INCOME_THRESHOLD = 9;
     public int HARD_AI_WORKER_VALUE_THRESHOLD = 5;
+    public int HARD_AI_SOLDIER_VALUE_THRESHOLD = 6;
 
     void Awake()
     {
