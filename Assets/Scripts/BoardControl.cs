@@ -319,6 +319,7 @@ public class BoardControl : MonoBehaviour
             {
                 Debug.Log($" > Hopping from {diceToMove.tileControl.tileIndex} too {path[i].tileIndex} ");
                 await HopAnimation(diceToMove, path[i]);
+                gameControl.audioManager.PlaySound("hop");
                 await Task.Delay(TimeSpan.FromSeconds(GlobalVariables.data.HOP_DELAY_TIME));
             }
             //Debug.Log($"exit hopping to tile");
@@ -347,6 +348,7 @@ public class BoardControl : MonoBehaviour
         if (targetDice.currentValue < 6)
         {
             await targetDice.AnimateDiceValueChange(targetDice.currentValue + 1);
+            gameControl.audioManager.PlaySound("reenforce");
             gameControl.playerControl.TakenMove();
         }
         else
@@ -374,6 +376,7 @@ public class BoardControl : MonoBehaviour
                 targetDice.tileControl.RemoveDiceOnTile();
                 DestroySingleDice(targetDice);                
             }
+            gameControl.audioManager.PlaySound("outpostAttack");
             gameControl.playerControl.TakenMove(1);
             gameControl.AllowInput();
         }
@@ -390,6 +393,12 @@ public class BoardControl : MonoBehaviour
         int sum = selectedDice.currentValue + targetDice.currentValue;
         if (targetDice.isBase)
         {
+            if (targetDice.GetDiceValue() == 6)
+            {
+                InvalidMove(targetDice.tileControl);
+                return;
+            }
+
             if (sum > 6)
             {
                 Debug.Log($"Reenforcing outpost from {targetDice.currentValue} to 6");
@@ -401,18 +410,19 @@ public class BoardControl : MonoBehaviour
                 Debug.Log($"Absorbing unit, from {targetDice.currentValue} to 6");
                 await HopTo(path, selectedDice);
                 await targetDice.AnimateDiceValueChange(6);
-                DestroySingleDice(selectedDice);
+                DestroySingleDice(selectedDice, true, false);
                 UpdateBoardMeta(selectedDice.tileControl, targetDice.tileControl, false);
             }else
             {
                 Debug.Log($"Reenforcing outpost from {targetDice.currentValue} to " + sum);
                 await HopTo(path, selectedDice);
                 await targetDice.AnimateDiceValueChange(sum);
-                DestroySingleDice(selectedDice);
+                DestroySingleDice(selectedDice, true, false);
                 UpdateBoardMeta(selectedDice.tileControl, targetDice.tileControl, false);
             }
             //targetDice.SetSelected();//crashes here
             //gameControl.currentySelected = targetDice;
+            gameControl.audioManager.PlaySound("combine");
             gameControl.playerControl.TakenMove(path.Count);
             gameControl.AllowInput();
             return;
@@ -447,12 +457,13 @@ public class BoardControl : MonoBehaviour
             await HopTo(path, selectedDice);
             Debug.Log($"Combining dice, {sum}");
             await targetDice.AnimateDiceValueChange(sum);
-            DestroySingleDice(selectedDice);
+            DestroySingleDice(selectedDice, true, false);
             UpdateBoardMeta(selectedDice.tileControl, targetDice.tileControl, false);
         }
         selectedDice.SetDeselected();
         targetDice.SetSelected();
         gameControl.currentySelected = targetDice;
+        gameControl.audioManager.PlaySound("combine");
         gameControl.playerControl.TakenMove(path.Count);
         gameControl.AllowInput();
     }
@@ -475,9 +486,9 @@ public class BoardControl : MonoBehaviour
             {
                 Debug.Log($"Tie, both destroyed");
                 await HopTo(path, attackingDice, true);
-
-                DestroySingleDice(attackingDice);
-                DestroySingleDice(targetEnemyDice);
+                gameControl.audioManager.PlaySound("hitEnemy");
+                DestroySingleDice(attackingDice, true, false);
+                DestroySingleDice(targetEnemyDice, true, false);
                 
             } else
             {
@@ -485,8 +496,8 @@ public class BoardControl : MonoBehaviour
                 await HopTo(path, attackingDice, true);
 
                 await targetEnemyDice.AnimateDiceValueChange(remainder);
-
-                DestroySingleDice(attackingDice);
+                gameControl.audioManager.PlaySound("hitEnemy");
+                DestroySingleDice(attackingDice, true, false);
             }
             gameControl.playerControl.TakenMove(path.Count);
             gameControl.AllowInput();
@@ -546,13 +557,14 @@ public class BoardControl : MonoBehaviour
         await parentDice.AnimateDiceValueChange(remainingValue);
     }
 
-    public void DestroySingleDice(Dice_Control diceToDestroy, bool removeTileDice = true)
+    public void DestroySingleDice(Dice_Control diceToDestroy, bool removeTileDice = true, bool playSound = true)
     {
         if (removeTileDice) diceToDestroy.tileControl.RemoveDiceOnTile();
         diceToDestroy.SetDeselected();
         diceToDestroy.StopAllCoroutines();
         diceToDestroy.player.diceOwned.Remove(diceToDestroy.gameObject);
         Destroy(diceToDestroy.gameObject);
+        if (playSound) gameControl.audioManager.PlaySound("destroyDice");
         //gameControl.AllowInput();//check here for if there is allow input issues
     }
 
@@ -571,8 +583,9 @@ public class BoardControl : MonoBehaviour
         newDice.transform.rotation.Normalize();
         newDice.transform.SetParent(player.transform);
         player.diceOwned.Add(newDice);
+        gameControl.audioManager.PlaySound("createDice");
 
-        if(player.ai == null)
+        if (player.ai == null)
             gameControl.AllowInput();
 
         return returnDice == true ? diceControl : null;
@@ -622,6 +635,7 @@ public class BoardControl : MonoBehaviour
     public void InvalidMove(TileControl showInvalidMoveOnTile)
     {
         gameControl.AllowInput();
+        gameControl.audioManager.PlaySound("invalidMove");
         showInvalidMoveOnTile.IndicateInvalidMove();
     }
 

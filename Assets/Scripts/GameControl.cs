@@ -10,6 +10,7 @@ public class GameControl : MonoBehaviour
     public BoardControl boardControl;
     public Ui_Control ui_Control;
     public CameraConrol cameraConrol;
+    public AudioManager audioManager;
     public AiControl aiControl;
 
     public Camera mainCamera;

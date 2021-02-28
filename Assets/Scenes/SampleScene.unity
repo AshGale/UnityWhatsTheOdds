@@ -5754,6 +5754,7 @@ MonoBehaviour:
   boardControl: {fileID: 1784543633}
   ui_Control: {fileID: 7728240}
   cameraConrol: {fileID: 963194230}
+  audioManager: {fileID: 1390776126}
   aiControl: {fileID: 1422614788}
   mainCamera: {fileID: 963194227}
   clickedObject: {fileID: 0}
@@ -5771,7 +5772,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &430872390
 GameObject:
@@ -6937,13 +6938,22 @@ MonoBehaviour:
   DICE_SIZE: 0.5
   MOVE_SPEED: 5
   THRUST_SPEED: 2
-  AI_ACTION_SPEED: 0.75
   NUMER_OF_PLAYERS: 2
   BOARD_CLEARANCE: 2.2
   TILE_CLEARANCE: 1.8
   HOP_DELAY_TIME: 0.2
   CURRENT_ZOOM: 2.5
   MAX_ZOOM: 2.5
+  AI_ACTION_SPEED: 0.75
+  EASY_AI_INCOME_THRESHOLD: 3
+  EASY_AI_WORKER_VALUE_THRESHOLD: 1
+  EASY_AI_SOLDIER_VALUE_THRESHOLD: 2
+  MEDIUM_AI_INCOME_THRESHOLD: 6
+  MEDIUM_AI_WORKER_VALUE_THRESHOLD: 3
+  MEDIUM_AI_SOLDIER_VALUE_THRESHOLD: 4
+  HARD_AI_INCOME_THRESHOLD: 9
+  HARD_AI_WORKER_VALUE_THRESHOLD: 5
+  HARD_AI_SOLDIER_VALUE_THRESHOLD: 6
 --- !u!4 &525981657
 Transform:
   m_ObjectHideFlags: 0
@@ -19031,6 +19041,98 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1389494671}
   m_CullTransparentMesh: 0
+--- !u!1 &1390776125
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1390776127}
+  - component: {fileID: 1390776126}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1390776126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1390776125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c450397ecd553db47b376d3630a9af6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: invalidMove
+    clip: {fileID: 8300000, guid: f63650782ef72d342be0e816a62ab486, type: 3}
+    volume: 0.5
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: hop
+    clip: {fileID: 8300000, guid: 106d86366edc03740a848beec4c8ed0e, type: 3}
+    volume: 0.5
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: destroyDice
+    clip: {fileID: 8300000, guid: c22d89d5b917f3f4393bc97fac26be19, type: 3}
+    volume: 0.4
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: createDice
+    clip: {fileID: 8300000, guid: 68398c7167d2a1744a32a8b0178d4181, type: 3}
+    volume: 0.4
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: hitEnemy
+    clip: {fileID: 8300000, guid: f42b10966d883124799d5632b864462a, type: 3}
+    volume: 0.5
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: reenforce
+    clip: {fileID: 8300000, guid: b012a98b22f51e44bb4465595ad136be, type: 3}
+    volume: 0.5
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: combine
+    clip: {fileID: 8300000, guid: 33c5e23b0e4dd5143978864ca080939d, type: 3}
+    volume: 0.5
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: outpostAttack
+    clip: {fileID: 8300000, guid: 8867469cb96548a409391f765b92fdfd, type: 3}
+    volume: 0.3
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+--- !u!4 &1390776127
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1390776125}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 570.27356, y: 703, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1395239092
 GameObject:
   m_ObjectHideFlags: 0
@@ -19849,6 +19951,7 @@ MonoBehaviour:
   pathFinding: {fileID: 1192089730}
   target: {fileID: 0}
   leiginToUse: {fileID: 0}
+  primaryOutpost: {fileID: 0}
   difficulty: 0
 --- !u!4 &1422614789
 Transform:
@@ -20691,7 +20794,7 @@ Transform:
   m_LocalScale: {x: 4, y: 4, z: 4}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1483643627
 GameObject:
@@ -23458,7 +23561,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1673921831
 GameObject:
