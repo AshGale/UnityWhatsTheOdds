@@ -11,7 +11,7 @@ public class GameControl : MonoBehaviour
     public Ui_Control ui_Control;
     public CameraConrol cameraConrol;
     public AudioManager audioManager;
-    public AiControl aiControl;
+    public GameObject aiControl;
 
     public Camera mainCamera;
     private Ray ray;

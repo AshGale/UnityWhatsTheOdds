@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 public enum AiDifficulty
 {
-    Easy, Medium, Hard
+    Player, Easy, Medium, Hard
 }
 
 public enum AiState
@@ -32,16 +32,17 @@ public class AiControl : MonoBehaviour
     {
         switch (player.ai.difficulty)
         {
-            case AiDifficulty.Easy: await EasyAi(player); break;
-            case AiDifficulty.Medium: await MediumAi(player); break;
-            case AiDifficulty.Hard: await EasyAi(player); break;
+            case AiDifficulty.Player: ; break;
+            case AiDifficulty.Easy: await AiLogic(player); break;
+            case AiDifficulty.Medium: await AiLogic(player); break;
+            case AiDifficulty.Hard: await AiLogic(player); break;
         }
     }
 
-    private async Task MediumAi(Player player)
+    private async Task AiLogic(Player player)
     {
         await Task.Delay(TimeSpan.FromSeconds(GlobalVariables.data.AI_ACTION_SPEED));
-        Debug.Log($"In Medium AI {player.playerName} income: {player.income}");
+        Debug.Log($"In {difficulty} AI {player.playerName} income: {player.income}");
         while (player.numberOfMoves > 0)
         {
             //Rand chance for this ?
@@ -85,20 +86,11 @@ public class AiControl : MonoBehaviour
                         {
                             AttackNearestEnemy(playerSoldiers[0], player);
                         }
-                    }
-
-
-                        //need to implement of ai will infinate loop and game will freze<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                        //kinda in end game for player. 
-                        //if all pices value >= 12 move to make a base withough leaving self with 0 income next round
-                        //else
-                        //if has soldier, attack nearest
-                        //else move close to nearest enemy
-                        //if number of dice > 1 combine dice, and attack
-                    }
+                    }                     
+                }
                 else
                 {
-                    //
+                    
                     if(player.numberOfMoves >= 2)
                     {
                         //todo, loop through all outposts and add together
@@ -111,6 +103,9 @@ public class AiControl : MonoBehaviour
                     else
                     {
                         //for when the player only has one move left
+                        //try create new worker, or add +1 to a soldier, try attack enemy, else, move worker, 1 space that has friendly beside it
+
+
                         Debug.Log($"Trying to inprove soldiers near base first at {primaryOutpost.tileControl.tileIndex}");
                         List<TileControl> soldiersNextToPrimaryOutpost = pathFinding.GetAjacentTiles(primaryOutpost.tileControl, GetAdjacentTilesType.AllFriendlySoldierDice, player);
                         ReenforceSolderOrCreateNew(soldiersNextToPrimaryOutpost);

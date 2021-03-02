@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     public Vector3 startLocation;
     public Vector3 cameraPosition;
     public int numberOfMoves;
+    public bool is_ai_player = false;
     public AiControl ai;
     public int income;//used for ai
 

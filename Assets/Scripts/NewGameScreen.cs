@@ -1,28 +1,29 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
-using System;
 
 public class NewGameScreen : MonoBehaviour
 {
-
     public TMP_InputField name1;
     public TMP_Dropdown colour1;
+    public TMP_Dropdown ai1;
     public GameObject included1;
     public GameObject notPlaying1;
 
     public TMP_InputField name2;
     public TMP_Dropdown colour2;
+    public TMP_Dropdown ai2; 
     public GameObject included2;
     public GameObject notPlaying2;
 
     public TMP_InputField name3;
     public TMP_Dropdown colour3;
+    public TMP_Dropdown ai3;
     public GameObject included3;
     public GameObject notPlaying3;
 
     public TMP_InputField name4;
     public TMP_Dropdown colour4;
+    public TMP_Dropdown ai4;
     public GameObject included4;
     public GameObject notPlaying4;
 

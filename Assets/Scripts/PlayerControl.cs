@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using TMPro;
 
 public class PlayerControl : MonoBehaviour
 {
@@ -48,56 +48,84 @@ public class PlayerControl : MonoBehaviour
         {
             GameObject player = Instantiate(Player, new Vector3(0f, 0f, 0f), Quaternion.identity);
             player.transform.SetParent(this.transform);
-            player.GetComponent<Player>().Init(GlobalVariables.data.PLAYER2_NAME,
+
+            Player player2 = player.GetComponent<Player>();
+
+            player2.Init(GlobalVariables.data.PLAYER2_NAME,
                 GlobalVariables.data.PLAYER_2_START,
                 GetPlayerColour(GlobalVariables.data.PLAYER2_COLOUR),
                 GlobalVariables.data.PLAYER_2_CAMERA_DEFAULT);
 
             //for testing
-            gameControl.aiControl.SetDifficulty(AiDifficulty.Medium);
-            player.GetComponent<Player>().ai = gameControl.aiControl;
+            newGameScreen.ai2.value = 1;
+            ApplyAiIfSet(newGameScreen.ai2, player2);
 
-            players.Add(player.GetComponent<Player>());
+            players.Add(player2);
 
         }
         if (newGameScreen.included3.activeSelf)
         {
             GameObject player = Instantiate(Player, new Vector3(0f, 0f, 0f), Quaternion.identity);
             player.transform.SetParent(this.transform);
-            player.GetComponent<Player>().Init(GlobalVariables.data.PLAYER3_NAME,
+
+            Player player3 = player.GetComponent<Player>();
+
+            player3.Init(GlobalVariables.data.PLAYER2_NAME,
                 GlobalVariables.data.PLAYER_3_START,
                 GetPlayerColour(GlobalVariables.data.PLAYER3_COLOUR),
                 GlobalVariables.data.PLAYER_3_CAMERA_DEFAULT);
 
             //for testing
-            gameControl.aiControl.SetDifficulty(AiDifficulty.Medium);
-            player.GetComponent<Player>().ai = gameControl.aiControl;
+            newGameScreen.ai3.value = 2;
+            ApplyAiIfSet(newGameScreen.ai3, player3);
 
-            players.Add(player.GetComponent<Player>());
+            players.Add(player3);
         }
         if (newGameScreen.included4.activeSelf)
         {
             GameObject player = Instantiate(Player, new Vector3(0f, 0f, 0f), Quaternion.identity);
             player.transform.SetParent(this.transform);
-            player.GetComponent<Player>().Init(GlobalVariables.data.PLAYER4_NAME,
+
+            Player player4 = player.GetComponent<Player>();
+
+            player4.Init(GlobalVariables.data.PLAYER4_NAME,
                 GlobalVariables.data.PLAYER_4_START,
                 GetPlayerColour(GlobalVariables.data.PLAYER4_COLOUR),
                 GlobalVariables.data.PLAYER_4_CAMERA_DEFAULT);
 
             //for testing
-            gameControl.aiControl.SetDifficulty(AiDifficulty.Medium);
-            player.GetComponent<Player>().ai = gameControl.aiControl;
+            newGameScreen.ai4.value = 3;
+            ApplyAiIfSet(newGameScreen.ai4, player4);
 
-
-            players.Add(player.GetComponent<Player>());
+            players.Add(player4);
         }
         indexOfCurrentPlayer = 0;
-        activePlayer = players.ElementAt(indexOfCurrentPlayer);
-
+        activePlayer = players.ElementAt(indexOfCurrentPlayer);        
     }
 
 
     //-------------------------------------------------------------------Helper functions for ai
+
+    void ApplyAiIfSet(TMP_Dropdown aiType, Player player)
+    {
+        if (aiType.options[aiType.value].text != AiDifficulty.Player.ToString())
+        {
+            GameObject ai = Instantiate(gameControl.aiControl, new Vector3(0f, 0f, 0f), Quaternion.identity);
+            ai.transform.SetParent(gameControl.aiControl.transform);
+
+            player.ai = ai.GetComponent<AiControl>();
+            player.is_ai_player = true;
+
+            switch (aiType.value)
+            {
+                case 0: player.ai.SetDifficulty(AiDifficulty.Player); break;
+                case 1: player.ai.SetDifficulty(AiDifficulty.Easy); break;
+                case 2: player.ai.SetDifficulty(AiDifficulty.Medium); break;
+                case 3: player.ai.SetDifficulty(AiDifficulty.Hard); break;
+            }
+        }
+    }
+
     public List<Dice_Control> GetAllPlayerWorkers(Player player)
     {
         return GetWorkersFromList(player.GetComponentsInChildren<Dice_Control>());
@@ -293,7 +321,7 @@ public class PlayerControl : MonoBehaviour
             }
         }
 
-        if (activePlayer.ai != null)
+        if (activePlayer.is_ai_player)
         {
             AiPlayersTurn(activePlayer);
         } else
@@ -304,7 +332,7 @@ public class PlayerControl : MonoBehaviour
 
     public void AiPlayersTurn(Player player)
     {
-        gameControl.aiControl.DoTurn(player);
+        player.ai.DoTurn(player);//revise, as upstaed workflow
     }
 
     public void EliminatePlayer()
