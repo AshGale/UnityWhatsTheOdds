@@ -317,6 +317,7 @@ public class BoardControl : MonoBehaviour
             //Debug.Log($"enter hopping to tile");
             for (int i = 0; i < pathLength; i++)
             {
+                //todo, take 1 move from the player, and return if the number is 0
                 Debug.Log($" > Hopping from {diceToMove.tileControl.tileIndex} too {path[i].tileIndex} ");
                 await HopAnimation(diceToMove, path[i]);
                 gameControl.audioManager.PlaySound("hop");
@@ -336,11 +337,12 @@ public class BoardControl : MonoBehaviour
     //-----------------------------------------end hop logic
     //-----------------------------------------start dice actions
 
-    internal async void MoveToEmptyTile(List<TileControl> path, Dice_Control diceToMove)
+    internal async Task MoveToEmptyTile(List<TileControl> path, Dice_Control diceToMove)
     {
         //Debug.Log($"Moving to Empty Tile");
+        //gameControl.playerControl.TakenMove(path.Count);
         await HopTo(path, diceToMove, false);
-        gameControl.playerControl.TakenMove(path.Count);
+        
     }
 
     internal async void BaseReenforceAdjacent(Dice_Control targetDice)
@@ -468,7 +470,7 @@ public class BoardControl : MonoBehaviour
         gameControl.AllowInput();
     }
 
-    internal async void CalculateAttackEnemy(Dice_Control attackingDice, Dice_Control targetEnemyDice, List<TileControl> path)
+    internal async Task CalculateAttackEnemy(Dice_Control attackingDice, Dice_Control targetEnemyDice, List<TileControl> path)
     {
         if (attackingDice.currentValue %2 ==0)
         {
@@ -481,7 +483,7 @@ public class BoardControl : MonoBehaviour
                 DestroySingleDice(targetEnemyDice);
                 await attackingDice.AnimateDiceValueChange(-remainder);
 
-                MoveToEmptyTile(new List<TileControl> { path.Last() }, attackingDice);
+                await MoveToEmptyTile(new List<TileControl> { path.Last() }, attackingDice);
             } else if (remainder == 0)
             {
                 Debug.Log($"Tie, both destroyed");

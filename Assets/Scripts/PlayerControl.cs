@@ -70,7 +70,7 @@ public class PlayerControl : MonoBehaviour
 
             Player player3 = player.GetComponent<Player>();
 
-            player3.Init(GlobalVariables.data.PLAYER2_NAME,
+            player3.Init(GlobalVariables.data.PLAYER3_NAME,
                 GlobalVariables.data.PLAYER_3_START,
                 GetPlayerColour(GlobalVariables.data.PLAYER3_COLOUR),
                 GlobalVariables.data.PLAYER_3_CAMERA_DEFAULT);
@@ -341,7 +341,12 @@ public class PlayerControl : MonoBehaviour
         RemovePlayer(activePlayer);
         if (players.Count > 1)
         {
+            if (indexOfCurrentPlayer >= players.Count)
+            {
+                indexOfCurrentPlayer = 0;
+            }
             activePlayer = players.ElementAt(indexOfCurrentPlayer);
+
             PrepairePlayerForTurn();
         }
         else

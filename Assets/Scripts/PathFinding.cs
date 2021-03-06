@@ -51,7 +51,7 @@ public class PathFinding : MonoBehaviour
                     //gameControl.playerControl.activePlayer.ai.target = target.diceOnTile;//could be better way
                     tile.SetPathValue(pathCost);
                     target = tile;
-                    Debug.Log($"Found enemy {target.diceOnTile.currentValue} {target.diceOnTile.player.name} at {target.tileIndex}");
+                    //Debug.Log($"Found enemy {target.diceOnTile.currentValue} {target.diceOnTile.player.name} at {target.tileIndex}");
                     break;//for
                     //may have but that dosen't add in new adjacent tiles when there is dice in the way
                 }
@@ -131,7 +131,7 @@ public class PathFinding : MonoBehaviour
                 }
                 else if (tile.pathValue < shortestTile.pathValue)
                 {
-                    Debug.Log($"closer tile found {tile.tileIndex}");
+                    //Debug.Log($"closer tile found {tile.tileIndex}");
                     shortestTile = tile;
                 }
             }

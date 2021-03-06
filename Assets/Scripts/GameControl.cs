@@ -62,7 +62,7 @@ public class GameControl : MonoBehaviour
         }
     }
 
-    private void MouseControl()
+    private async void MouseControl()
     {
         ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
@@ -175,7 +175,8 @@ public class GameControl : MonoBehaviour
                             PrintPath(path);
                             if (clickedTile.diceOnTile == null)
                             {
-                                boardControl.MoveToEmptyTile(path, currentySelected);
+                                await boardControl.MoveToEmptyTile(path, currentySelected);
+                                playerControl.TakenMove();
                                 AllowInput();
 
                             }
@@ -202,7 +203,7 @@ public class GameControl : MonoBehaviour
                                     }
                                     else
                                     {
-                                        boardControl.CalculateAttackEnemy(currentySelected, diceOneTile, path);
+                                        await boardControl.CalculateAttackEnemy(currentySelected, diceOneTile, path);
                                     }
                                 }
                             }
@@ -235,7 +236,7 @@ public class GameControl : MonoBehaviour
                                 }
                                 else
                                 {
-                                    boardControl.CalculateAttackEnemy(currentySelected, clickedDice, path);
+                                    await boardControl.CalculateAttackEnemy(currentySelected, clickedDice, path);
                                 }
                             }                            
                         }
