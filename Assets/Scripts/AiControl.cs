@@ -61,57 +61,12 @@ public class AiControl : MonoBehaviour
 
                 if (primaryOutpost == null)
                 {
-                    Dice_Control dice_Control;
-                    int playerValue = 0;
-                    foreach (GameObject dice in player.diceOwned)
-                    {
-                        dice_Control = dice.GetComponent<Dice_Control>();
-                        playerValue += dice_Control.GetDiceValue();
-                        if (playerValue >= 12) break;
-                    }
-
-                    if (playerValue >= 12)
-                    {
-                        Debug.Log($"Player {player.playerName} value greater than 12, can make another outpost");
-                        TryToCreateNewOutpost(player);
-                    } else
-                    {
-                        Debug.Log($"Player {player.playerName} < 12 attack enemy");
-
-                        if (await GetSolderAndAttackEnemy(player) == false)
-                        {
-                            //create soldier from workers
-                            //get worker nearest enemy, get workers nearest to that one, then combine to create a soldier
-                            Debug.Log($"Player {player.playerName} only has workers >>>>> not implemented to find nearby workers, to make a solder, to attack");
-                        }
-                        //List<Dice_Control> playerSoldiers = gameControl.playerControl.GetAllPlayerSoldiers(player);
-                        //if(playerSoldiers.Count == 0)
-                        //{
-                        //    //create soldier from workers
-                        //    //get worker nearest enemy, get workers nearest to that one, then combine to create a soldier
-                        //    Debug.Log($"Player {player.playerName} only has workers >>>>> not implemented to find nearby workers, to make a solder, to attack");
-                        //} else
-                        //{
-                        //    await AttackNearestEnemy(playerSoldiers[0], player);
-                        //}
-                    }                     
+                    await NoOutpostLogic(player);
                 }
                 else
-                {                    
-                    if(player.numberOfMoves >= 2)
-                    {
-                        //todo, loop through all outposts and add together
-                        Debug.Log($"Trying to Add 2 too value 1 workers near outpost at {primaryOutpost.tileControl.tileIndex}");
-                        List<TileControl> workersNextToPrimaryOutpost = pathFinding.GetAjacentTiles(primaryOutpost.tileControl, GetAdjacentTilesType.AllFriendlyWorkersDice, player);
-
-                        //is there workers with value lower than threshold                   
-                        await UpgradeWorkerOrCreateNew(workersNextToPrimaryOutpost);
-                    }
-                    else
-                    {
-                        //for when the player only has one move left                   
-                        DetermineLastMove(player);
-                    }
+                {
+                    if (await ImproveIncome(player) == false) 
+                        DetermineLastMove(player);                    
                 }
             }
             else
@@ -120,33 +75,19 @@ public class AiControl : MonoBehaviour
                 List<Dice_Control> playerSoldiers = gameControl.playerControl.GetAllPlayerSoldiers(player);
                 Debug.Log($"Player {player.playerName} Income Avove {incomeValueThreshold} -> attack with {playerSoldiers.Count} soldiers");
 
-                if (playerSoldiers.Count == 0) {
-                    Debug.Log($"No soldier found for {player.playerName}");
-                    List<TileControl> playersWorksNextToOutpost = pathFinding.GetAjacentTiles(primaryOutpost.tileControl, GetAdjacentTilesType.AllFriendlyWorkersDice, player);
-
-                    leiginToUse = null;
-                    foreach (TileControl worker in playersWorksNextToOutpost)
+                if (playerSoldiers.Count == 0)
+                {
+                    if (player.income > (incomeValueThreshold + workerValueThreshold))
                     {
-                        if (worker.diceOnTile.GetDiceValue() <= soldierValueThreshold)
-                        {
-                            //soldierTile.diceOnTile.GetDiceValue() != 6
-                            leiginToUse = worker.diceOnTile;
-                            //break;//stop looking
-                        }
+                        if (CreateSoldierFromWorkerNextToOupost(player) == false)
+                            await ImproveIncome(player);
+                    } else
+                    {   
+                        await ImproveIncome(player);
+                        //DetermineLastMove(player);
                     }
-
-                    if (leiginToUse == null)
-                    {
-                        //will have to check for empty spaces first, else move a dice ?
-                        Debug.Log($"No workers next to outpost {primaryOutpost.tileControl.tileIndex}, below threshold {soldierValueThreshold}");
-                        CreateWorkerNextToOupost(primaryOutpost);
-                    }
-                    else
-                    {
-                        Debug.Log($"Adding +1 to make Soldier {leiginToUse.tileControl.tileIndex} next to {primaryOutpost.tileControl.tileIndex}");
-                        gameControl.boardControl.BaseReenforceAdjacent(leiginToUse);
-                    }                  
-                } else if (playerSoldiers.Count == 1)
+                }
+                else if (playerSoldiers.Count == 1)
                 {
                     leiginToUse = playerSoldiers[0];
                     Debug.Log($"Soldier {leiginToUse.GetDiceValue()} found at {leiginToUse.tileControl.tileIndex}");
@@ -166,15 +107,127 @@ public class AiControl : MonoBehaviour
         await Task.Delay(TimeSpan.FromSeconds(GlobalVariables.data.AI_ACTION_SPEED));        
     }
 
+    private bool CreateSoldierFromWorkerNextToOupost(Player player)
+    {
+        Debug.Log($"No soldier found for {player.playerName}");
+        List<TileControl> playersWorksNextToOutpost = pathFinding.GetAjacentTiles(primaryOutpost.tileControl, GetAdjacentTilesType.AllFriendlyWorkersDice, player);
+
+        leiginToUse = null;
+        int currentDistanceToEnemy = 9999999;
+        List<TileControl> pathToEnemy = new List<TileControl>();
+        foreach (TileControl worker in playersWorksNextToOutpost)
+        {
+            if (worker.diceOnTile.GetDiceValue() <= soldierValueThreshold)
+            {
+                //logic to ensure the worker converted is the closest to the enemy
+                if (leiginToUse == null)
+                {
+                    //just add
+                    //soldierTile.diceOnTile.GetDiceValue() != 6
+                    leiginToUse = worker.diceOnTile;
+                    pathToEnemy = pathFinding.FindPathToNearestEnemy(leiginToUse.tileControl, player);
+                    currentDistanceToEnemy = pathToEnemy.Count;
+                    //break;//stop looking
+                }
+                else
+                {
+                     pathToEnemy = pathFinding.FindPathToNearestEnemy(worker.diceOnTile.tileControl, player);
+                    if (pathToEnemy.Count < currentDistanceToEnemy)
+                    {
+                        leiginToUse = worker.diceOnTile;
+                        currentDistanceToEnemy = pathToEnemy.Count;
+                    }
+                }                
+            }
+        }
+
+        if (leiginToUse == null)
+        {
+            //will have to check for empty spaces first, else move a dice ?
+            Debug.Log($"No workers next to outpost {primaryOutpost.tileControl.tileIndex}, below threshold {soldierValueThreshold}");
+            //CreateWorkerNextToOupost(primaryOutpost);
+            return false;
+        }
+        else
+        {
+            Debug.Log($"Adding +1 to make Soldier {leiginToUse.tileControl.tileIndex} next to {primaryOutpost.tileControl.tileIndex}");
+            gameControl.boardControl.BaseReenforceAdjacent(leiginToUse);
+            return true;
+        }
+    }
+
+    private async Task<bool> ImproveIncome(Player player)
+    {
+        if (await CanUpgradeWorker(player)) return true;
+        if (CreateWorkerNextToOupost(primaryOutpost)) return true;
+        await MoveWorkerOneSquare(player);
+        return true;
+    }
+
+    private async Task<bool> CanUpgradeWorker (Player player)
+    {
+        Debug.Log($"Trying to Add 2 too value 1 workers near outpost at {primaryOutpost.tileControl.tileIndex}");
+        if (player.numberOfMoves < 2) return false;        
+
+        List<TileControl> workersNextToPrimaryOutpost = 
+            pathFinding.GetAjacentTiles(primaryOutpost.tileControl, GetAdjacentTilesType.AllFriendlyWorkersDice, player);
+
+        leiginToUse = null;
+        foreach (TileControl workerTile in workersNextToPrimaryOutpost)
+        {
+            if (workerTile.diceOnTile.GetDiceValue() < workerValueThreshold)
+            {
+                leiginToUse = workerTile.diceOnTile;
+                break;
+            }
+        }
+        if (leiginToUse != null)
+        {
+            await UpgradeWorker(leiginToUse);
+            return true;
+        }
+        return false;
+    }
+
+    private async Task UpgradeWorker(Dice_Control worker)
+    {
+        Debug.Log($"Adding 2 too worker at {worker.tileControl.tileIndex}");
+        gameControl.boardControl.BaseReenforceAdjacent(worker);
+        await Task.Delay(TimeSpan.FromSeconds(GlobalVariables.data.AI_ACTION_SPEED));
+        gameControl.boardControl.BaseReenforceAdjacent(worker);
+    }
+    private async Task NoOutpostLogic(Player player)
+    {
+        Dice_Control dice_Control;
+        int playerValue = 0;
+        foreach (GameObject dice in player.diceOwned)
+        {
+            dice_Control = dice.GetComponent<Dice_Control>();
+            playerValue += dice_Control.GetDiceValue();
+            if (playerValue >= 12) break;
+        }
+
+        if (playerValue >= 12)
+        {
+            Debug.Log($"Player {player.playerName} value greater than 12, can make another outpost");
+            TryToCreateNewOutpost(player);
+        }
+        else
+        {
+            Debug.Log($"Player {player.playerName} < 12 attack enemy");
+
+            if (await GetSolderAndAttackEnemy(player) == false)
+            {
+                //create soldier from workers
+                //get worker nearest enemy, get workers nearest to that one, then combine to create a soldier
+                Debug.Log($"Player {player.playerName} only has workers >>>>> not implemented to find nearby workers, to make a solder, to attack");
+            }
+        }
+    }
+
     private async void DetermineLastMove(Player player)
     {
-        //list of things to do as priority, return if satifyied
-
-        //try create new worker, 
-        //or add +1 to a soldier, 
-        //try attack enemy, 
-        //else move worker 1 space that has friendly beside it
-
+        Debug.Log($"Determining LastMove for {leiginToUse.tileControl} ");
         if (CreateWorkerNextToOupost(primaryOutpost)) return;
         if (ReenforceSolder(player)) return;
         if (await GetSolderAndAttackEnemy(player)) return;
@@ -236,32 +289,7 @@ public class AiControl : MonoBehaviour
         }
     }
 
-    private async Task UpgradeWorkerOrCreateNew(List<TileControl> workersNextToPrimaryOutpost)
-    {
-        //TODO updatet to be a return bool, and create if false
-        leiginToUse = null;
-        foreach (TileControl workerTile in workersNextToPrimaryOutpost)
-        {
-            if (workerTile.diceOnTile.GetDiceValue() < workerValueThreshold)
-            {
-                leiginToUse = workerTile.diceOnTile;
-                break;
-            }
-        }
-
-        if (leiginToUse != null)
-        {
-            Debug.Log($"Adding 2 too worker at {leiginToUse.tileControl.tileIndex}");
-            gameControl.boardControl.BaseReenforceAdjacent(leiginToUse);
-            await Task.Delay(TimeSpan.FromSeconds(GlobalVariables.data.AI_ACTION_SPEED));
-            gameControl.boardControl.BaseReenforceAdjacent(leiginToUse);
-        }
-        else
-        {
-            Debug.Log($"No Workers to add 2 too, below worker value threshold {workerValueThreshold}");
-            CreateWorkerNextToOupost(primaryOutpost);
-        }
-    }
+    
 
     private async Task<bool> GetSolderAndAttackEnemy(Player player)
     {
@@ -401,111 +429,7 @@ public class AiControl : MonoBehaviour
 
     //------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    //private async Task EasyAi(Player player)
-    //{
-    //    Debug.Log($"In easy AI with {player.numberOfMoves}");
-    //    //this.player = player;//gameControl.playerControl.activePlayer;
-
-    //    //while actions > 0 && PlayerHasSoldier = false
-    //    while (player.numberOfMoves > 0)
-    //    {
-    //        if (PlayerHasSoldier(player))
-    //        {
-    //            //find nearest enemy unit
-    //            List<TileControl> path = pathFinding.FindPathToNearestEnemy(leiginToUse.tileControl, player);
-    //            //int pathLength = path.Count;
-
-    //            //assign the target at the end of the path
-    //            Debug.Log($"got path, setting target");
-    //            target = path[path.Count - 1].diceOnTile;
-
-    //            //first element, is own tile. 
-    //            path = path.GetRange(1, path.Count - 1);
-
-    //            if (path.Count > player.numberOfMoves)
-    //            {
-    //                Debug.Log($"{leiginToUse.tileControl.tileIndex} too far away from {target.tileControl.tileIndex} {path.Count} > {player.numberOfMoves}");
-    //                //move the first x number of moves
-    //                List<TileControl> pathProgress = path.GetRange(0, player.numberOfMoves);
-
-    //                Debug.Log($"Moving {pathProgress.Count} our of {path.Count}");
-
-    //                await gameControl.boardControl.HopTo(pathProgress, leiginToUse, false);
-    //                //await Task.Delay(TimeSpan.FromSeconds(GlobalVariables.data.AI_ACTION_SPEED));
-    //                gameControl.playerControl.TakenMove(player.numberOfMoves);
-    //            }
-    //            else
-    //            {
-    //                Debug.Log($"{leiginToUse.tileControl.tileIndex} can attack {path.Count} away, target {target.tileControl.tileIndex} {target.currentValue}");
-
-    //                if (target.isBase)
-    //                {
-    //                    Debug.Log($"{leiginToUse.tileControl.tileIndex} {leiginToUse.currentValue} attacking Outpost {target.tileControl.tileIndex} {target.currentValue}");
-    //                    gameControl.boardControl.CalculateAttackEnemyBase(leiginToUse, target, path);
-    //                }
-    //                else
-    //                {
-    //                    Debug.Log($"{leiginToUse.tileControl.tileIndex} {leiginToUse.currentValue} attacking {target.tileControl.tileIndex} {target.currentValue}");
-    //                    await gameControl.boardControl.CalculateAttackEnemy(leiginToUse, target, path);
-    //                }
-    //                //gameControl.playerControl.TakeMovesFromPlayer(player, pathLength);
-    //            }
-    //            //for easy ai, just look back to start
-    //            target = null;
-    //            leiginToUse = null;
-    //        }
-    //        else
-    //        {
-    //            //if player has worker
-    //            //add too worker, 
-    //            //else create dice
-    //            // - pick random side to create dice
-
-    //            leiginToUse = gameControl.playerControl.GetFirstPlayerWorker(player);
-    //            if (leiginToUse == null)
-    //            {
-    //                Debug.Log($"No workers found for player: {player.name}");
-
-    //                Dice_Control playerOutpost = gameControl.playerControl.GetFirstPlayerOutpost(player);
-    //                if (playerOutpost != null)
-    //                {
-    //                    CreateWorkerNextToOupost(playerOutpost);
-    //                }
-    //                else
-    //                {
-    //                    Debug.Log($"{player.playerName} has no Outpost, or workers or soldiers, should be out of the game");
-    //                }
-    //            }
-    //            else
-    //            {
-    //                Debug.Log($"At least 1 Worker found for player {player.playerName}");
-    //                Dice_Control playerOutpost = gameControl.playerControl.GetFirstPlayerOutpost(player);//Note for multible outpost, will need to sync with FindWorkerBesideOutpost
-
-    //                if (FindWorkerBesideOutpost(playerOutpost))
-    //                {
-    //                    Debug.Log($"Worker found, adding 1 to it -> {player.playerName}");
-    //                    AddPlussOneToWorkerNextToOutPost(playerOutpost, leiginToUse, player);
-    //                }
-    //                else
-    //                {
-    //                    Debug.Log($"Worker is not next to a outpost");
-    //                    CreateWorkerNextToOupost(playerOutpost);
-    //                }
-    //            }
-    //        }
-    //        await Task.Delay(TimeSpan.FromSeconds(GlobalVariables.data.AI_ACTION_SPEED));//>>>>) actions taken
-    //    }//end while
-    //    //reset for next ai turn
-    //    target = null;
-    //    leiginToUse = null;
-    //}
-
-    //private void AddPlussOneToWorkerNextToOutPost(Dice_Control outpost, Dice_Control workerToAddToo, Player player)
-    //{
-    //    Debug.Log($"Adding + 1 to worker beside {outpost.tileControl} for {player.playerName}");
-    //    gameControl.boardControl.BaseReenforceAdjacent(workerToAddToo);
-    //}
-
+   
     private bool CreateWorkerNextToOupost(Dice_Control outpost)
     {
         List<TileControl> candidateTiles = pathFinding.GetAjacentTiles(outpost.tileControl, GetAdjacentTilesType.AllEmpty);
@@ -520,9 +444,6 @@ public class AiControl : MonoBehaviour
 
     private TileControl PickAjacentTileNearestToEnemy(List<TileControl> candidateTiles, Player player)
     {
-        //take the tile, and get adjacent.
-        // filter out the ones that have
-        //if null ahhhhh error
         
         if (candidateTiles.Count == 0)
         {
@@ -552,63 +473,6 @@ public class AiControl : MonoBehaviour
             return closesetToEnemy;
         }
     }
-
-    //private bool FindWorkerBesideOutpost(Dice_Control playerOutpost)
-    //{
-    //    //revise to look next to outposts for a worker.
-    //    List<Dice_Control> workers = gameControl.playerControl.GetAllPlayerWorkers(playerOutpost.player);
-    //    if (workers.Count == 1)
-    //    {
-    //        Debug.Log($"1 worker for player: {playerOutpost.player.playerName} at {workers[0].tileControl.tileIndex}");
-    //        List<TileControl> foundOutpost = pathFinding.GetAjacentTiles(workers[0].tileControl, GetAdjacentTilesType.AllFriendlyOutposts, playerOutpost.player);
-    //        if (foundOutpost.Count > 0)
-    //        {
-    //            Debug.Log($"worker {workers[0].tileControl.tileIndex} is next to outpost at {foundOutpost[0].tileIndex}");
-    //            leiginToUse = workers[0];//set a worker next to an outpost to the active unit
-    //            return true;
-    //        }
-    //        else
-    //        {
-    //            Debug.Log($"worker not next to outpost");
-    //            return false;
-    //        }
-    //    }
-    //    else
-    //    {
-    //        Debug.Log($"Multible workers for player: {playerOutpost.player.playerName}");
-    //        foreach (Dice_Control worker in workers)
-    //        {
-    //            if (pathFinding.GetAjacentTiles(worker.tileControl, GetAdjacentTilesType.AllFriendlyOutposts, playerOutpost.player).Count > 0)
-    //            {
-    //                Debug.Log($" - worker {worker.currentValue} {worker.tileControl.tileIndex} is next to outpost");
-    //                leiginToUse = worker;//set a worker next to an outpost to the active unit
-
-    //                //for multible outposts get the tile with the outpost on it// easy ai won't make new outpost, so todo
-    //                return true;
-    //            }
-    //            else
-    //            {
-    //                Debug.Log($" - worker {worker.tileControl.tileIndex} not next to outpost");
-    //            }
-    //        }
-    //    }
-    //    return false; //there was no worker next to a base
-    //}
-
-    //private bool PlayerHasSoldier(Player player)
-    //{
-    //    leiginToUse = gameControl.playerControl.GetFirstPlayerSoldier(player);
-    //    if (leiginToUse != null)
-    //    {
-    //        Debug.Log($"Soldier found at {leiginToUse.tileControl.tileIndex}");
-    //        return true;
-    //    }
-    //    else
-    //    {
-    //        Debug.Log($"No soldier found for {player.playerName}");
-    //        return false;
-    //    }
-    //}
 
     //------------------------------------------------------------------------------------------------------------------------------
 

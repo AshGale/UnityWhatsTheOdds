@@ -38,11 +38,18 @@ public class PlayerControl : MonoBehaviour
         {
             GameObject player = Instantiate(Player, new Vector3(0f,0f,0f), Quaternion.identity);
             player.transform.SetParent(this.transform);
-            player.GetComponent<Player>().Init(GlobalVariables.data.PLAYER1_NAME,
+
+            Player player1 = player.GetComponent<Player>();
+
+            player1.Init(GlobalVariables.data.PLAYER1_NAME,
                 GlobalVariables.data.PLAYER_1_START,
                 GetPlayerColour(GlobalVariables.data.PLAYER1_COLOUR),
                 GlobalVariables.data.PLAYER_1_CAMERA_DEFAULT);
-            players.Add(player.GetComponent<Player>());
+
+            newGameScreen.ai1.value = 3;
+            ApplyAiIfSet(newGameScreen.ai1, player1);
+
+            players.Add(player1);
         }
         if (newGameScreen.included2.activeSelf)
         {
